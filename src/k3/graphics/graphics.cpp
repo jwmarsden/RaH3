@@ -7,6 +7,7 @@ namespace k3::graphics  {
             return;
         }  
         fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+        KE_CRITICAL("Vulkan Error: {}", err);
         if (err < 0) {
             abort();
         }   
@@ -29,6 +30,8 @@ namespace k3::graphics  {
         m_renderer = std::make_shared<KeRenderer>();
         m_renderer->init(m_window, m_device);
 
+        VkRenderPass renderPass = m_renderer->getSwapChainRenderPass();
+ 
         uint32_t minImageCount = 2;
         uint32_t imageCount = (uint32_t) m_renderer->getSwapChainImageCount();
 
@@ -37,66 +40,81 @@ namespace k3::graphics  {
         ImGui_ImplVulkanH_Window* imgGUIWindow = &g_MainWindowData;
 
         imgGUIWindow->Surface = m_device->getSurface();
-
+    
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+        // Setup Dear ImGui style
         ImGui::StyleColorsDark();
+        //ImGui::StyleColorsClassic();
 
-        VkRenderPass renderPass = m_renderer->getSwapChainRenderPass();
-
+        // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+        ImGuiStyle& style = ImGui::GetStyle();
+        
         ImGui_ImplGlfw_InitForVulkan(m_window->getGLFWwindow(), true);
-        ImGui_ImplVulkan_InitInfo init_info = {};
-        init_info.Instance = m_device->getInstance();
-        init_info.PhysicalDevice = m_device->getPhysicalDevice();
-        init_info.Device = m_device->getDevice();
-        init_info.QueueFamily = m_device->getGraphicsFamily();
-        init_info.Queue = m_device->getGraphicsQueue();
-        //init_info.PipelineCache = g_PipelineCache;
-        init_info.DescriptorPool = m_device->getDescriptorPool();
-        init_info.Subpass = 0;
-        init_info.MinImageCount = minImageCount;
-        init_info.ImageCount = imageCount;
-        init_info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
-        init_info.Allocator = nullptr;
-        init_info.CheckVkResultFn = check_vk_result;
-        ImGui_ImplVulkan_Init(&init_info, renderPass);
-
+        ImGui_ImplVulkan_InitInfo imguiInit = {};
+        imguiInit.Instance = m_device->getInstance();
+        imguiInit.PhysicalDevice = m_device->getPhysicalDevice();
+        imguiInit.Device = m_device->getDevice();
+        imguiInit.QueueFamily = m_device->getGraphicsFamily();
+        imguiInit.Queue = m_device->getGraphicsQueue();
+        imguiInit.DescriptorPool = m_device->getDescriptorPool();
+        imguiInit.Subpass = 0;
+        imguiInit.MinImageCount = minImageCount;
+        imguiInit.ImageCount = imageCount;
+        imguiInit.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+        imguiInit.Allocator = nullptr;
+        imguiInit.CheckVkResultFn = check_vk_result;
+        ImGui_ImplVulkan_Init(&imguiInit, renderPass);
 
         VkResult err;
         // Upload Fonts
         {
-            // Use any command queue
             VkCommandPool commandPool = m_device->getCommandPool();
-            VkCommandBuffer commandBuffer = m_renderer->getSystemCommandBuffer();
-
-            err = vkResetCommandPool(m_device->getDevice(), commandPool, 0);
-            check_vk_result(err);
-
+            std::vector<VkCommandBuffer> m_commandBuffers;
+            m_commandBuffers.resize(1);
+            VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
+            commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+            commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+            commandBufferAllocateInfo.commandPool = m_device->getCommandPool();
+            commandBufferAllocateInfo.commandBufferCount = static_cast<uint32_t>(1);    
+            if (vkAllocateCommandBuffers(m_device->getDevice() , &commandBufferAllocateInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to allocate command buffers.");
+                throw std::runtime_error("Failed to allocate command buffers.");
+            }
+            VkCommandBuffer commandBuffer = m_commandBuffers[0];
+            if (vkResetCommandPool(m_device->getDevice(), commandPool, 0) != VK_SUCCESS) {
+                KE_CRITICAL("Failed Reset Command Pool.");
+                throw std::runtime_error("Failed Reset Command Pool.");
+            }
             VkCommandBufferBeginInfo begin_info = {};
             begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
             begin_info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-            err = vkBeginCommandBuffer(commandBuffer, &begin_info);
-            check_vk_result(err);
+            if (vkBeginCommandBuffer(commandBuffer, &begin_info) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to begin command buffer.");
+                throw std::runtime_error("Failed to begin command buffer.");
+            }
 
             ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
 
+            if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to end command buffer.");
+                throw std::runtime_error("Failed to end command buffer.");
+            }
             VkSubmitInfo end_info = {};
             end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
             end_info.commandBufferCount = 1;
             end_info.pCommandBuffers = &commandBuffer;
-            err = vkEndCommandBuffer(commandBuffer);
-            check_vk_result(err);
-            err = vkQueueSubmit(m_device->getGraphicsQueue(), 1, &end_info, VK_NULL_HANDLE);
-            check_vk_result(err);
 
-            err = vkDeviceWaitIdle(m_device->getDevice());
-            check_vk_result(err);
-            //ImGui_ImplVulkan_DestroyFontUploadObjects();
+            if (vkQueueSubmit(m_device->getGraphicsQueue(), 1, &end_info, VK_NULL_HANDLE) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to submit command buffer.");
+                throw std::runtime_error("Failed to submit command buffer.");
+            }
+            vkDeviceWaitIdle(m_device->getDevice());
+            ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
-
-
+    
         m_renderSystem = std::make_shared<KeSimpleRenderSystem>();
         m_renderSystem->init(m_device, renderPass);
 
@@ -109,6 +127,8 @@ namespace k3::graphics  {
         if(m_initFlag) {
             m_initFlag = false;
             KE_INFO("Kinetic Shutting Down Graphics.");
+
+            vkDeviceWaitIdle(m_device->getDevice());
 
             ImGui_ImplVulkan_Shutdown();
             ImGui_ImplGlfw_Shutdown();
@@ -144,35 +164,23 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    void KeGraphics::handleUpdate(float deltaTime) {
-        //KE_IN("(deltaTime: {})", deltaTime);
+    void KeGraphics::beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Kinetic!");
+    }
 
-        ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-        
+    void KeGraphics::endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
+
         ImGui::End();
-        
-        ImGuiIO& io = ImGui::GetIO();
-        
+        ImGui::EndFrame();
+
         ImGui::Render();
-        ImDrawData* draw_data = ImGui::GetDrawData();
-        //const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
-        /*
-        if (!is_minimized)
-        {
-            wd->ClearValue.color.float32[0] = clear_color.x * clear_color.w;
-            wd->ClearValue.color.float32[1] = clear_color.y * clear_color.w;
-            wd->ClearValue.color.float32[2] = clear_color.z * clear_color.w;
-            wd->ClearValue.color.float32[3] = clear_color.w;
-            FrameRender(wd, draw_data);
-            FramePresent(wd);
-        }
-        */
-        //KE_OUT(KE_NOARG);
+        ImDrawData* drawData = ImGui::GetDrawData();
+
+        ImGui_ImplVulkan_RenderDrawData(drawData, commandBuffer);
     }
 
 }

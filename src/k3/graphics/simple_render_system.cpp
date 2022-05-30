@@ -72,7 +72,7 @@ namespace k3::graphics  {
         }
         KE_OUT("(): _pipelineLayout@<{}>", fmt::ptr(&m_pipelineLayout));
     }
-/*
+
     void KeSimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera) {
         m_pipeline->bind(commandBuffer);
 
@@ -89,5 +89,5 @@ namespace k3::graphics  {
             gameObject.model->draw(commandBuffer);
         }
     }
-*/
+
 }

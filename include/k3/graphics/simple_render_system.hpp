@@ -4,9 +4,8 @@
 
 #include "device.hpp"
 #include "pipeline.hpp"
-//#include "camera.hpp"
-//#include "game_object.hpp"
-
+#include "camera.hpp"
+#include "game_object.hpp"
 
 #include <cassert>
 #include <memory>
@@ -30,7 +29,7 @@ namespace k3::graphics {
 
             void shutdown();  
 
-            //void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera);
+            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera);
 
         private:
 

@@ -19,10 +19,8 @@
 #include "pipeline.hpp"
 #include "model.hpp"
 #include "simple_render_system.hpp"
-/*
 #include "camera.hpp"
 #include "game_object.hpp"
-*/
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -56,9 +54,11 @@ namespace k3::graphics {
 
             std::shared_ptr<KeRenderer> getRenderer() {return m_renderer;};
 
-        private:
+            void beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime);
 
-            
+            void endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime);
+
+        private:
 
             bool m_initFlag = false;
 
@@ -73,5 +73,6 @@ namespace k3::graphics {
             std::shared_ptr<KeRenderer> m_renderer = nullptr;
 
             ImGui_ImplVulkanH_Window g_MainWindowData;
+            
     };
 }

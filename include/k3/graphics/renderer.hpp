@@ -5,7 +5,7 @@
 #include "window.hpp"
 #include "device.hpp"
 #include "swapchain.hpp"
-//#include "pipeline.hpp"
+#include "pipeline.hpp"
 
 #include <cassert>
 #include <memory>
@@ -36,10 +36,6 @@ namespace k3::graphics {
             VkRenderPass getSwapChainRenderPass() const {return m_swapChain->getRenderPass(); };
 
             float getAspectRatio() const { return m_swapChain->extentAspectRatio(); }
-
-            VkCommandBuffer getSystemCommandBuffer() const {
-                return m_commandBuffers[m_currentFrameIndex];
-            };
 
             VkCommandBuffer getCurrentCommandBuffer() const {
                 assert(m_isFrameStarted && "Cannot get command buffer when frame not in progress");
