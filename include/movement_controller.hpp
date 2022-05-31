@@ -42,9 +42,13 @@ namespace k3::controller {
 
             KeyMappings keys{};
 
-            float moveSpeed{4.f};
+            float moveSpeed{3.f};
 
-            float lookSpeed{3.f};
+            float lookSpeed{2.f};
+
+            float sensitivity = 1.f;
+
+            bool invert = false;
 
         private:
 

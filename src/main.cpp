@@ -196,8 +196,8 @@ void run() {
     auto renderSystem = m_graphics->getRenderSystem();
     //auto swapChain = renderer->getSwapChain();
     
-    //k3::controller::WindowBehaviorController windowController{};
-    //windowController.init(m_window, m_graphics);
+    k3::controller::WindowBehaviorController windowController{};
+    windowController.init(m_window, m_graphics);
 
     auto viewerObject = k3::graphics::KeGameObject::createGameObject();
     viewerObject.init();
@@ -208,7 +208,8 @@ void run() {
 
     // Store frametime average
     int fps = 0;
-    const int FRAME_TIME_SIZE = 20;
+    float avgRenderTime = 0;
+    const int FRAME_TIME_SIZE = 100;
     int currentFrameTime = 0;
     float frameTimeStore[FRAME_TIME_SIZE];
     for(int i=0;i<FRAME_TIME_SIZE;i++) {
@@ -217,8 +218,6 @@ void run() {
     const float FRAME_TIME_SIZE_FLOAT = static_cast<float>(FRAME_TIME_SIZE);
 
     uint32_t frameCounter = 0;
-    
-    std::string fpsText = "Average fps ...";
 
     while(!m_window->shouldClose()) {
         // This might block
@@ -226,20 +225,16 @@ void run() {
 
         // Check GUI Updates - Update the fps every 100 frames. 
         if(frameCounter%200 == 0) {
-            float frameTimeAverage = 0;
+            avgRenderTime = 0;
             for(int i=0;i<FRAME_TIME_SIZE;i++) {
                 if(frameTimeStore[i] == -1.f) {
-                    frameTimeAverage = 0;
+                    avgRenderTime = 0;
                     break;
                 }
-                frameTimeAverage += frameTimeStore[i];
+                avgRenderTime += frameTimeStore[i];
             }
-            if(frameTimeAverage > 0 && FRAME_TIME_SIZE > 0) {
-                fps = 1.f / (frameTimeAverage/FRAME_TIME_SIZE_FLOAT);
-                std::ostringstream oss;
-                oss << "Average fps " << ((fps < 100) ? "0" : "") << fps << "";
-                fpsText = oss.str();
-                //m_window->setWindowName(title.c_str());
+            if(avgRenderTime > 0 && FRAME_TIME_SIZE > 0) {
+                fps = 1.f / (avgRenderTime/FRAME_TIME_SIZE_FLOAT);
             }
         }
 
@@ -267,7 +262,21 @@ void run() {
             // Render
             renderSystem->renderGameObjects(commandBuffer, m_gameObjects, camera);
             m_graphics->beginGUIFrameRender(commandBuffer, frameTime);
-            ImGui::Text(fpsText.c_str()); 
+
+            ImGuiIO& io = ImGui::GetIO(); (void)io;
+            if (io.WantCaptureMouse) {
+
+            }
+            ImGui::Text("Average Render %.2f ms (%d fps)", avgRenderTime, fps);
+
+            ImGui::PlotLines("Times", frameTimeStore, IM_ARRAYSIZE(frameTimeStore), ((currentFrameTime+1>=FRAME_TIME_SIZE) ? 0 : currentFrameTime+1));
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(0,0.6,0.8,1), "Mouse Settings");
+            ImGui::SliderFloat("Sensitivity", &cameraController.sensitivity, 0.f, 20.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
+            ImGui::Checkbox("Invert", &cameraController.invert);
+            ImGui::Separator();
+            ImGui::TextColored(ImVec4(0,0.6,0.8,1), "Control Settings");
+            ImGui::SliderFloat("Walk Speed", &cameraController.moveSpeed, 1.f, 20.0f, "%.4f");
             m_graphics->endGUIFrameRender(commandBuffer, frameTime);
 
             renderer->endSwapChainRenderPass(commandBuffer);
@@ -278,7 +287,7 @@ void run() {
     vkDeviceWaitIdle(device->getDevice());
     cameraController.shutdown();
     viewerObject.shutdown();
-    //windowController.shutdown();
+    windowController.shutdown();
 }
 
 int main() {

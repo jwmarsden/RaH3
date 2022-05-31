@@ -46,6 +46,8 @@ namespace k3::controller {
         // Mouse move callback
         //glfwSetCursorPosCallback(m_window->getGLFWwindow(), &cursorPositionCallback);
         
+        glfwSetScrollCallback(m_window->getGLFWwindow(), scrollCallback);
+
         KE_OUT(KE_NOARG); 
     }
 
@@ -64,8 +66,8 @@ namespace k3::controller {
         auto window = graphics->getWindow();
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.AddMouseButtonEvent(button, (action == GLFW_PRESS) ? true : false);
         
-
         if (!io.WantCaptureMouse && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             KE_DEBUG("Kinetic Window Mouse Left Click ({},{},{})!", button, action, mods);
             window->captureInput();
@@ -104,5 +106,11 @@ namespace k3::controller {
 
         KE_DEBUG("Kinetic Window Mouse Move ({},{})!", xpos, ypos);
     }
+
+
+    void WindowBehaviorController::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+        KE_DEBUG("Kinetic Window Scroll({},{})!", xoffset, yoffset);
+    }
+
 
 }

@@ -39,15 +39,22 @@ namespace k3::controller {
         }
 
         // TODO: Mouse Acceleration
-        rotate.x += -yDelta*0.1f;
-        rotate.y += xDelta*0.1f;
+        if(sensitivity != 0.f) {
+            //KE_DEBUG("Sensitivity: {}", sensitivity);
+            rotate.x += ((!invert) ? -1 : 1) * yDelta * sensitivity;
+            rotate.y += xDelta * sensitivity;
+        } else {
+            rotate.x += ((!invert) ? -1 : 1) * yDelta;
+            rotate.y += xDelta;
+        }
+
 
         if(glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon()) {
-            gameObject.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
+            gameObject.transform.rotation += lookSpeed * dt * rotate;
         }
 
         // Limit pitch between +/- 15 degrees until this much better
-        gameObject.transform.rotation.x = glm::clamp(gameObject.transform.rotation.x, -glm::pi<float>()/12.f, glm::pi<float>()/12.f);
+        gameObject.transform.rotation.x = glm::clamp(gameObject.transform.rotation.x, -glm::pi<float>()/9.f, glm::pi<float>()/9.f);
         // Stop rotation > 0 and < 360
         gameObject.transform.rotation.y = glm::mod(gameObject.transform.rotation.y, glm::two_pi<float>());
 

@@ -34,6 +34,8 @@ namespace k3::controller {
 
             static void mouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
 
+            static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
             void registerForWindowEvents();
 
             bool m_initFlag = false;

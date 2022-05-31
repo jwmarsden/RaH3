@@ -169,7 +169,7 @@ namespace k3::graphics  {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Kinetic!");
+        ImGui::Begin("Kinetic Console!");
     }
 
     void KeGraphics::endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
