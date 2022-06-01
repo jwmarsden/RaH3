@@ -1,22 +1,29 @@
 cmake_minimum_required(VERSION 3.21)
-project(kinetic C CXX)
+project(Kinetic! VERSION "0.4.1")
 
 set(CMAKE_CXX_STANDARD 20)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
-message("Setting Build Type Release")
-option(KE_CONFIG_RELEASE "Release Mode On" ON)
-endif ()
-
-if(KE_CONFIG_RELEASE)
-  add_definitions(-DKE_CONFIG_RELEASE)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(K3_BT 1)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(K3_BT 2)
+elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(K3_BT 1)
+elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    set(K3_BT 2)
+else()
+    MESSAGE( STATUS "CMAKE_BUILD_TYPE not set yet ${CMAKE_BUILD_TYPE}" )
 endif()
-
-# Include spdlog
-include_directories(${PROJECT_SOURCE_DIR}/vendor/spdlog/include)
 
 # Add headers
 include_directories(${PROJECT_SOURCE_DIR}/include)
+
+# Include Config.h
+configure_file(${PROJECT_SOURCE_DIR}/include/config.h.in ${PROJECT_SOURCE_DIR}/include/config.h)
+include_directories(${PROJECT_BINARY_BIN}) 
+
+# Include spdlog
+include_directories(${PROJECT_SOURCE_DIR}/vendor/spdlog/include)
 
 # Add children 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/k3/logging)

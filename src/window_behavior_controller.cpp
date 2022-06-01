@@ -12,7 +12,7 @@ namespace k3::controller {
 
         registerForWindowEvents();
 
-        KE_OUT(KE_NOARG)
+        KE_OUT(KE_NOARG);
     }
 
     void WindowBehaviorController::shutdown() {

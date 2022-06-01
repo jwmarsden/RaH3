@@ -14,7 +14,7 @@ namespace k3::graphics  {
     }
 
     void KeGraphics::init(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window) {
-        KE_INFO("Kinetic Init {}.{}.{}",0,0,3);
+        KE_INFO("Kinetic Init {}.{}.{}",PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PROJECT_VER_PATCH);
         assert(!m_initFlag && "Already had init.");
         m_logManger = logManager;
         KE_TRACE("Trace Logging On.");
@@ -167,9 +167,13 @@ namespace k3::graphics  {
     void KeGraphics::beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
-        ImGui::Begin("Kinetic Console!");
+
+        ImGui::NewFrame();
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(280, 200), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
+        ImGui::Begin(PROJECT_TITLE);
     }
 
     void KeGraphics::endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {

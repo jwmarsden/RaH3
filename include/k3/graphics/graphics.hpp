@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config.h"
+
 #include "log.h"
 #include "k3/logging/log_manager.hpp"
 

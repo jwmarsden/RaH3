@@ -6,7 +6,7 @@ namespace k3::controller {
         KE_IN(KE_NOARG);
         assert(!m_initFlag && "Already had init.");
         m_initFlag = true;
-        KE_OUT(KE_NOARG)
+        KE_OUT(KE_NOARG);
     }
 
     void KeyboardMovementController::shutdown() {
@@ -33,10 +33,6 @@ namespace k3::controller {
         float xDelta = xPos - m_xPos;
         float yDelta = yPos - m_yPos;
         glm::vec3 rotate{0};
-
-        if(xDelta !=0 || yDelta != 0) {
-            //KE_DEBUG("Movement: {}, {}", xDelta, yDelta);
-        }
 
         // TODO: Mouse Acceleration
         if(sensitivity != 0.f) {

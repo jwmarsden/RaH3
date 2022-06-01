@@ -1,4 +1,5 @@
 .vscode*
+include/config.h
 build/
 logs/
 *.spv
