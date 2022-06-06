@@ -8,7 +8,7 @@
 
 namespace k3::graphics { 
 
-    void KeWindow::init(int width, int height, std::string windowName) {
+    void KeWindow::init(int width, int height, const std::string& windowName) {
         KE_IN("({},{},{})", width, height, windowName);
         assert(!m_initFlag && "Already had init.");
         m_width = width;
