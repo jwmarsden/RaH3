@@ -13,6 +13,7 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     set(K3_BT 2)
 else()
     MESSAGE( STATUS "CMAKE_BUILD_TYPE not set yet ${CMAKE_BUILD_TYPE}" )
+    set(K3_BT 2)
 endif()
 
 # Add headers

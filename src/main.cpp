@@ -37,6 +37,8 @@ std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
 std::vector<k3::graphics::KeGameObject> m_gameObjects;
 
 std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graphics::KeGraphics> graphics, glm::vec3 offset) {
+    k3::graphics::KeModel::Builder modelBuilder{};
+
     std::random_device rd;  
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
@@ -48,7 +50,7 @@ std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graph
     float r5 = dis(gen); float g5 = dis(gen); float b5 = dis(gen);
     float r6 = dis(gen); float g6 = dis(gen); float b6 = dis(gen);
 
-    std::vector<k3::graphics::KeModel::Vertex> verticies {
+    modelBuilder.verticies = {
         
         // left face
         {{-.5f, -.5f, -.5f}, {r1, g1, b1}},
@@ -99,11 +101,11 @@ std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graph
         {{.5f, .5f, -0.5f}, {r6, g6, b6}},
     
     };
-    for (auto& v : verticies) {
+    for (auto& v : modelBuilder.verticies) {
         v.position += offset;
     }
     std::shared_ptr<k3::graphics::KeModel> model = std::make_shared<k3::graphics::KeModel>();
-    model->init(graphics->getDevice(), verticies);
+    model->init(graphics->getDevice(), modelBuilder);
     return model;
 }
 

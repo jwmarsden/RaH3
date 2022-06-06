@@ -26,11 +26,19 @@ namespace k3::graphics {
 
             };
 
+            struct Builder {
+
+                std::vector<Vertex> verticies{};
+
+                std::vector<uint32_t> indices{};
+
+            };
+
             KeModel() = default;
 
             ~KeModel() {if(m_initFlag) shutdown();}
 
-            void init(std::shared_ptr<KeDevice> device, std::vector<Vertex> verticies);
+            void init(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder);
 
             void shutdown();
 
@@ -40,11 +48,11 @@ namespace k3::graphics {
 
         private:
 
-            void createVertexBuffers(const std::vector<Vertex> verticies);
+            void createVertexBuffers(const std::vector<Vertex> &verticies);
+
+            void createIndexBuffers(const std::vector<uint32_t> &indices);
 
             bool m_initFlag = false;
-
-            std::vector<Vertex> m_vertices;
 
             std::shared_ptr<KeDevice> m_device;
 
@@ -53,6 +61,14 @@ namespace k3::graphics {
             VkDeviceMemory m_vertexBufferMemory;
 
             uint32_t m_vertexCount;
+
+            bool m_hasIndexBuffer = false;
+
+            VkBuffer m_indexBuffer;
+
+            VkDeviceMemory m_indexBufferMemory;
+
+            uint32_t m_indexCount;
 
     };
 

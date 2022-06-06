@@ -5,12 +5,14 @@
 
 namespace k3::graphics {
 
-    void KeModel::init(std::shared_ptr<KeDevice> device, std::vector<Vertex> verticies) {
+    void KeModel::init(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder) {
         KE_IN(KE_NOARG);
         assert(!m_initFlag && "Already had init.");
         m_device = device;
-        m_vertices = verticies;
-        createVertexBuffers(verticies);
+        createVertexBuffers(builder.verticies);
+        if(m_hasIndexBuffer) {
+            createIndexBuffers(builder.indices);
+        }
         m_initFlag = true;
         KE_OUT(KE_NOARG);
     }
@@ -22,6 +24,11 @@ namespace k3::graphics {
             m_initFlag = false;
             vkDestroyBuffer(m_device->getDevice(), m_vertexBuffer, nullptr);
             vkFreeMemory(m_device->getDevice() , m_vertexBufferMemory, nullptr);
+            if(m_hasIndexBuffer) {
+                vkDestroyBuffer(m_device->getDevice(), m_indexBuffer, nullptr);
+                vkFreeMemory(m_device->getDevice() , m_indexBufferMemory, nullptr);
+            }
+
             if(m_device != nullptr) {
                 m_device = nullptr;
             }
@@ -29,7 +36,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeModel::createVertexBuffers(const std::vector<Vertex> verticies) {
+    void KeModel::createVertexBuffers(const std::vector<Vertex> &verticies) {
         KE_IN(KE_NOARG);
         m_vertexCount = static_cast<uint32_t>(verticies.size());
         assert(m_vertexCount >= 3 && "Vertex Count Must Be At Least 3");
@@ -47,17 +54,41 @@ namespace k3::graphics {
         vkUnmapMemory(m_device->getDevice() , m_vertexBufferMemory);
         KE_OUT(KE_NOARG);
     }
+
+    void KeModel::createIndexBuffers(const std::vector<uint32_t> &indices) {
+        KE_IN(KE_NOARG);
+        m_indexCount = static_cast<uint32_t>(indices.size());
+        VkDeviceSize bufferSize = sizeof(indices[0]) * m_indexCount;
+        m_device->createBuffer(
+            bufferSize,
+            VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+            m_indexBuffer,
+            m_indexBufferMemory);
+
+        void *data;
+        vkMapMemory(m_device->getDevice() , m_indexBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
+        vkUnmapMemory(m_device->getDevice() , m_indexBufferMemory);
+        KE_OUT(KE_NOARG);
+    }    
     
     void KeModel::bind(VkCommandBuffer commandBuffer) {
         //KE_IN(KE_NOARG);
         VkBuffer buffers[] = {m_vertexBuffer};
         VkDeviceSize offsets[] = {0};
         vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        if(m_hasIndexBuffer) {
+            vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        }
         //KE_OUT(KE_NOARG);
     }
 
     void KeModel::draw(VkCommandBuffer commandBuffer) {
         //KE_IN(KE_NOARG);
+        if(m_hasIndexBuffer) {
+            vkCmdDrawIndexed(commandBuffer, m_indexCount, 1, 0, 0, 0);
+        }
         vkCmdDraw(commandBuffer, m_vertexCount, 1, 0, 0);
         //KE_OUT(KE_NOARG);
     }
