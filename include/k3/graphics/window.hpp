@@ -18,7 +18,7 @@ namespace k3::graphics {
 
             ~KeWindow() {if(m_initFlag) shutdown();}
 
-            void init(int width, int height, std::string windowName);
+            void init(int width, int height, const std::string& windowName);
 
             void shutdown();
 
