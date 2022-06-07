@@ -36,6 +36,10 @@ std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
 
 std::vector<k3::graphics::KeGameObject> m_gameObjects;
 
+
+
+
+
 std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graphics::KeGraphics> graphics, glm::vec3 offset) {
     k3::graphics::KeModel::Builder modelBuilder{};
 
@@ -50,60 +54,49 @@ std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graph
     float r5 = dis(gen); float g5 = dis(gen); float b5 = dis(gen);
     float r6 = dis(gen); float g6 = dis(gen); float b6 = dis(gen);
 
-    modelBuilder.verticies = {
-        
-        // left face
+    modelBuilder.vertices  = {
+        // left face 
         {{-.5f, -.5f, -.5f}, {r1, g1, b1}},
         {{-.5f, .5f, .5f}, {r1, g1, b1}},
         {{-.5f, -.5f, .5f}, {r1, g1, b1}},
-        {{-.5f, -.5f, -.5f}, {r1, g1, b1}},
         {{-.5f, .5f, -.5f}, {r1, g1, b1}},
-        {{-.5f, .5f, .5f}, {r1, g1, b1}},
-    
-        // right face
+
+        // right face 
         {{.5f, -.5f, -.5f}, {r2, g2, b2}},
         {{.5f, .5f, .5f}, {r2, g2, b2}},
         {{.5f, -.5f, .5f}, {r2, g2, b2}},
-        {{.5f, -.5f, -.5f}, {r2, g2, b2}},
         {{.5f, .5f, -.5f}, {r2, g2, b2}},
-        {{.5f, .5f, .5f}, {r2, g2, b2}},
-    
-        // top face (remember y axis points down)
+
+        // top face 
         {{-.5f, -.5f, -.5f}, {r3, g3, b3}},
         {{.5f, -.5f, .5f}, {r3, g3, b3}},
         {{-.5f, -.5f, .5f}, {r3, g3, b3}},
-        {{-.5f, -.5f, -.5f}, {r3, g3, b3}},
         {{.5f, -.5f, -.5f}, {r3, g3, b3}},
-        {{.5f, -.5f, .5f}, {r3, g3, b3}},
-    
-        // bottom face 
+
+        // bottom face
         {{-.5f, .5f, -.5f}, {r4, g4, b4}},
         {{.5f, .5f, .5f}, {r4, g4, b4}},
         {{-.5f, .5f, .5f}, {r4, g4, b4}},
-        {{-.5f, .5f, -.5f}, {r4, g4, b4}},
         {{.5f, .5f, -.5f}, {r4, g4, b4}},
-        {{.5f, .5f, .5f}, {r4, g4, b4}},
-    
+
         // nose face 
         {{-.5f, -.5f, 0.5f}, {r5, g5, b5}},
         {{.5f, .5f, 0.5f}, {r5, g5, b5}},
         {{-.5f, .5f, 0.5f}, {r5, g5, b5}},
-        {{-.5f, -.5f, 0.5f}, {r5, g5, b5}},
         {{.5f, -.5f, 0.5f}, {r5, g5, b5}},
-        {{.5f, .5f, 0.5f}, {r5, g5, b5}},
-    
-        // tail face 
+
+        // tail face
         {{-.5f, -.5f, -0.5f}, {r6, g6, b6}},
         {{.5f, .5f, -0.5f}, {r6, g6, b6}},
         {{-.5f, .5f, -0.5f}, {r6, g6, b6}},
-        {{-.5f, -.5f, -0.5f}, {r6, g6, b6}},
         {{.5f, -.5f, -0.5f}, {r6, g6, b6}},
-        {{.5f, .5f, -0.5f}, {r6, g6, b6}},
-    
     };
-    for (auto& v : modelBuilder.verticies) {
+    for (auto& v : modelBuilder.vertices ) {
         v.position += offset;
     }
+
+    modelBuilder.indices = {0,  1,  2,  0,  3,  1,  4,  5,  6,  4,  7,  5,  8,  9,  10, 8,  11, 9, 12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23, 21};
+
     std::shared_ptr<k3::graphics::KeModel> model = std::make_shared<k3::graphics::KeModel>();
     model->init(graphics->getDevice(), modelBuilder);
     return model;
@@ -114,25 +107,15 @@ void loadGameObjects() {
 
     glm::vec3 offset{};
 
-    const int HALF_SIZE = 1;
+    std::shared_ptr<k3::graphics::KeModel> model = createCubeModel(m_graphics, offset);
 
-    for (int i=-HALF_SIZE; i<=HALF_SIZE; i++) {
+    auto cube = k3::graphics::KeGameObject::createGameObject();
+    cube.init();
+    cube.model = model;
+    cube.transform.translation = {0.f, 0.f, 5.f};
+    cube.transform.scale = {.5f, .5f, .5f};
 
-        for (int j=-HALF_SIZE; j<=HALF_SIZE; j++) {
-
-            for (int k=-HALF_SIZE; k<=HALF_SIZE; k++) {
-                std::shared_ptr<k3::graphics::KeModel> model = createCubeModel(m_graphics, offset);
-
-                auto cube = k3::graphics::KeGameObject::createGameObject();
-                cube.init();
-                cube.model = model;
-                cube.transform.translation = {i, j, k+5.f};
-                cube.transform.scale = {.5f, .5f, .5f};
-
-                m_gameObjects.push_back(std::move(cube));
-            }
-        }
-    }
+    m_gameObjects.push_back(std::move(cube));
 
     KE_OUT(KE_NOARG);
 }

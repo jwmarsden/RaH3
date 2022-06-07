@@ -28,7 +28,7 @@ namespace k3::graphics {
 
             struct Builder {
 
-                std::vector<Vertex> verticies{};
+                std::vector<Vertex> vertices{};
 
                 std::vector<uint32_t> indices{};
 
@@ -48,7 +48,7 @@ namespace k3::graphics {
 
         private:
 
-            void createVertexBuffers(const std::vector<Vertex> &verticies);
+            void createVertexBuffers(const std::vector<Vertex> &vertices);
 
             void createIndexBuffers(const std::vector<uint32_t> &indices);
 
