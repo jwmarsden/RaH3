@@ -21,13 +21,9 @@ namespace k3::graphics {
     class KeSimpleRenderSystem {
         public:
 
-            KeSimpleRenderSystem() = default;
+            KeSimpleRenderSystem(std::shared_ptr<KeDevice> device, VkRenderPass renderPass);
 
-            ~KeSimpleRenderSystem() {if(m_initFlag) shutdown();}
-
-            void init(std::shared_ptr<KeDevice> device, VkRenderPass renderPass);
-
-            void shutdown();  
+            ~KeSimpleRenderSystem();
 
             void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera);
 
@@ -36,8 +32,6 @@ namespace k3::graphics {
             void createPipelineLayout();
 
             void createPipeline(VkRenderPass renderPass);
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeDevice> m_device;
 

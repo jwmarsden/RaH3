@@ -30,19 +30,15 @@ namespace k3::graphics {
     
         public:
 
-#ifndef KE_CONFIG_RELEASE
+#if K3_BUILD_TYPE == 1
             const bool enableValidationLayers = true;
 #else
             const bool enableValidationLayers = false;
 #endif
 
-            KeDevice() = default;
+            KeDevice(std::shared_ptr<KeWindow> window);
 
-            ~KeDevice() {if(m_initFlag) shutdown();}
-
-            void init(std::shared_ptr<KeWindow> window);
-
-            void shutdown();
+            ~KeDevice();
 
             VkInstance getInstance() { 
                 return m_instance; 
@@ -131,8 +127,6 @@ namespace k3::graphics {
             void createDescriptorPool();
 
             void createCommandPool();
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeWindow> m_window;
 

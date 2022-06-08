@@ -2,25 +2,17 @@
 
 namespace k3::graphics { 
 
-    void KeSwapChain::init(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent) {
+    KeSwapChain::KeSwapChain(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {} {
         KE_IN("m_device<{}>,<{},{}>", fmt::ptr(&device), windowExtent.width, windowExtent.height);
-        assert(!m_initFlag && "Already had init.");
-        m_device = device;
-        m_windowExtent = windowExtent;
-
         KE_DEBUG("Init Systems");
         initSystems();
         KE_OUT(KE_NOARG);  
     }
 
-    void KeSwapChain::init(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous) {
+    KeSwapChain::KeSwapChain(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {std::move(previous)} {
         KE_IN("(m_device<{}>,<{},{}>,previous@<{}>)", fmt::ptr(&device), windowExtent.width, windowExtent.height, fmt::ptr(&previous));
-        assert(!m_initFlag && "Already had init.");
-        m_device = device;
-        m_windowExtent = windowExtent;
-
+        
         KE_DEBUG("Init Systems");
-        oldSwapChain = std::move(previous);
         initSystems();
         if(!compareSwapFormats(*oldSwapChain.get())) {
             // TODO Make a callback to application to trigger update. 
@@ -29,64 +21,72 @@ namespace k3::graphics {
         }
 
         KE_DEBUG("Cleanup previous swapchain.");
-        oldSwapChain->shutdown();
         oldSwapChain = nullptr;
+        
         KE_OUT(KE_NOARG);  
     }
 
     void KeSwapChain::initSystems() {
         KE_IN(KE_NOARG);  
+        
         createSwapChain();
         createImageViews();
         createRenderPass();
         createDepthResources();
         createFramebuffers();
         createSyncObjects();
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG);  
     }
 
-    void KeSwapChain::shutdown() {
+    KeSwapChain::~KeSwapChain() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-                vkDestroySemaphore(m_device->getDevice(), m_renderFinishedSemaphores[i], nullptr);
-                vkDestroySemaphore(m_device->getDevice(), m_imageAvailableSemaphores[i], nullptr);
-                vkDestroyFence(m_device->getDevice(), m_inFlightFences[i], nullptr);
-            }
 
-            for (auto framebuffer : m_swapChainFramebuffers) {
-                vkDestroyFramebuffer(m_device->getDevice(), framebuffer, nullptr);
-            }
-
-            for (int i = 0; i < m_depthImages.size(); i++) {
-                vkDestroyImageView(m_device->getDevice(), m_depthImageViews[i], nullptr);
-                vkDestroyImage(m_device->getDevice(), m_depthImages[i], nullptr);
-                vkFreeMemory(m_device->getDevice(), m_depthImageMemorys[i], nullptr);
-            }
-
-            if(m_renderPass != nullptr) {
-                vkDestroyRenderPass(m_device->getDevice(), m_renderPass, nullptr);
-                m_renderPass = nullptr;
-            }
-
-            for (auto imageView : m_swapChainImageViews) {
-                vkDestroyImageView(m_device->getDevice(), imageView, nullptr);
-            }
-            m_swapChainImageViews.clear();
-
-            if (m_swapChain != nullptr) {
-                vkDestroySwapchainKHR(m_device->getDevice(), m_swapChain, nullptr);
-                m_swapChain = nullptr;
-            }
+        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            vkDestroySemaphore(m_device->getDevice(), m_renderFinishedSemaphores[i], nullptr);
+            vkDestroySemaphore(m_device->getDevice(), m_imageAvailableSemaphores[i], nullptr);
+            vkDestroyFence(m_device->getDevice(), m_inFlightFences[i], nullptr);
         }
+
+        for (auto framebuffer : m_swapChainFramebuffers) {
+            vkDestroyFramebuffer(m_device->getDevice(), framebuffer, nullptr);
+        }
+
+        for (int i = 0; i < m_depthImages.size(); i++) {
+            vkDestroyImageView(m_device->getDevice(), m_depthImageViews[i], nullptr);
+            vkDestroyImage(m_device->getDevice(), m_depthImages[i], nullptr);
+            vkFreeMemory(m_device->getDevice(), m_depthImageMemorys[i], nullptr);
+        }
+
+        if(m_renderPass != nullptr) {
+            vkDestroyRenderPass(m_device->getDevice(), m_renderPass, nullptr);
+            m_renderPass = nullptr;
+        }
+
+        for (auto imageView : m_swapChainImageViews) {
+            vkDestroyImageView(m_device->getDevice(), imageView, nullptr);
+        }
+        m_swapChainImageViews.clear();
+
+        if (m_swapChain != nullptr) {
+            vkDestroySwapchainKHR(m_device->getDevice(), m_swapChain, nullptr);
+            m_swapChain = nullptr;
+        }
+
+        if(m_device != nullptr) {
+            m_device = nullptr;
+        }
+
+        if(oldSwapChain != nullptr) {
+            oldSwapChain = nullptr;
+        }
+
         KE_OUT(KE_NOARG);
     }
 
     void KeSwapChain::createSwapChain() {
         KE_IN(KE_NOARG);
+        
         SwapChainSupportDetails swapChainSupport = m_device->getSwapChainSupport();
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);

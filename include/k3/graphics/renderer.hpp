@@ -19,7 +19,7 @@ namespace k3::graphics {
 
             KeRenderer() = default;
 
-            ~KeRenderer() {if(m_initFlag) shutdown();}
+            ~KeRenderer() = default;
 
             void init(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device);
 
@@ -62,8 +62,6 @@ namespace k3::graphics {
             void freeCommandBuffers();
 
             void recreateSwapChain();
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeWindow> m_window;
 

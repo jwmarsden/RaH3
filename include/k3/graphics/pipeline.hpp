@@ -31,13 +31,10 @@ namespace k3::graphics {
     class KePipeline {
 
         public:
-            KePipeline() = default;
 
-            ~KePipeline() {if(m_initFlag) shutdown();}
+            KePipeline(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo);
 
-            void init(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo);
-
-            void shutdown();
+            ~KePipeline();
             
             void bind(VkCommandBuffer commandBuffer);
 
@@ -50,8 +47,6 @@ namespace k3::graphics {
             void createGraphicsPipeline(const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo);
 
             void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeDevice> m_device;
 

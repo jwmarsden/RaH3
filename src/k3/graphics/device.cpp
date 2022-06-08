@@ -36,11 +36,8 @@ namespace k3::graphics {
         debugUtilCreateInfo.pUserData = nullptr; 
     }
 
-    void KeDevice::init(std::shared_ptr<KeWindow> window) {
+    KeDevice::KeDevice(std::shared_ptr<KeWindow> window) : m_window{window} {
         KE_IN("(window@<{}>)", fmt::ptr(window));
-        assert(!m_initFlag && "Already had init.");
-
-        m_window = window;
 
         // Define Available Extensions
         std::vector<std::string> availableInstanceExtensions = getAvailableInstanceExtensions();
@@ -77,43 +74,39 @@ namespace k3::graphics {
         createLogicalDevice(requestDeviceExtensions);
         createDescriptorPool();
         createCommandPool();
-        
-        m_initFlag = true;
 
         KE_OUT(KE_NOARG);
     }
 
-    void KeDevice::shutdown() {
+    KeDevice::~KeDevice() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            if (m_commandPool != nullptr) {
-                vkDestroyCommandPool(m_device, m_commandPool, nullptr);
-                m_commandPool = nullptr;
-            }
-            if (m_descriptorPool != nullptr) {
-                vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
-                m_descriptorPool = nullptr;
-            }
-            if (m_device != nullptr) {
-                vkDestroyDevice(m_device, nullptr);
-                m_device = nullptr;
-            }
-            if (enableValidationLayers && m_debugMessenger != nullptr) {
-                DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
-                m_debugMessenger = nullptr;
-            }
-            if (m_surface != nullptr) {
-                vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
-                m_surface = nullptr;
-            }
-            if (m_instance != nullptr) {
-                vkDestroyInstance(m_instance, nullptr);
-                m_instance = nullptr;
-            }
-            m_window = nullptr;
-        } 
+
+        if (m_commandPool != nullptr) {
+            vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+            m_commandPool = nullptr;
+        }
+        if (m_descriptorPool != nullptr) {
+            vkDestroyDescriptorPool(m_device, m_descriptorPool, nullptr);
+            m_descriptorPool = nullptr;
+        }
+        if (m_device != nullptr) {
+            vkDestroyDevice(m_device, nullptr);
+            m_device = nullptr;
+        }
+        if (enableValidationLayers && m_debugMessenger != nullptr) {
+            DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+            m_debugMessenger = nullptr;
+        }
+        if (m_surface != nullptr) {
+            vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+            m_surface = nullptr;
+        }
+        if (m_instance != nullptr) {
+            vkDestroyInstance(m_instance, nullptr);
+            m_instance = nullptr;
+        }
+        m_window = nullptr;
+
         KE_OUT(KE_NOARG);
     }
 

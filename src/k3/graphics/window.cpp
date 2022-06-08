@@ -8,12 +8,8 @@
 
 namespace k3::graphics { 
 
-    void KeWindow::init(int width, int height, const std::string& windowName) {
+    KeWindow::KeWindow(int width, int height, const std::string& windowName) : m_width{ width }, m_height{ height }, m_windowName{ windowName } {
         KE_IN("({},{},{})", width, height, windowName);
-        assert(!m_initFlag && "Already had init.");
-        m_width = width;
-        m_height = height;
-        m_windowName = windowName;
         glfwInit();
         // Tell GLFW not to use OpenGL
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -22,20 +18,16 @@ namespace k3::graphics {
         
         glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);
 
-        m_initFlag = true;
-
         KE_INFO("Kinetic Created Window (Title \"{}\")", m_windowName.c_str());
         KE_OUT("(): m_window@<{}>", fmt::ptr(&m_window));
     }
 
-    void KeWindow::shutdown() {
+    KeWindow::~KeWindow() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            glfwDestroyWindow(m_window);
-            glfwTerminate();
-        }
+
+        glfwDestroyWindow(m_window);
+        glfwTerminate();
+
         KE_OUT(KE_NOARG);
     }
 

@@ -12,15 +12,12 @@
 namespace k3::graphics {
 
     class KeWindow {
+
         public:
 
-            KeWindow() = default;
+            KeWindow(int width, int height, const std::string& windowName);
 
-            ~KeWindow() {if(m_initFlag) shutdown();}
-
-            void init(int width, int height, const std::string& windowName);
-
-            void shutdown();
+            ~KeWindow();
 
             bool shouldClose() { 
                 return glfwWindowShouldClose(m_window); 
@@ -60,15 +57,13 @@ namespace k3::graphics {
 
             static void framebufferResizeCallback(GLFWwindow *glfwWindow, int width, int height);
 
-            bool m_initFlag = false;
-
             int m_width;
 
             int m_height;
 
             bool m_framebufferResized = false;
 
-            std::string m_windowName;
+            const std::string m_windowName;
 
             GLFWwindow *m_window;
 

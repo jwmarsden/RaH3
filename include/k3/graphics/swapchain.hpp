@@ -12,15 +12,11 @@ namespace k3::graphics {
 
             static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-            KeSwapChain() = default;
+            KeSwapChain(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent);
 
-            ~KeSwapChain() {if(m_initFlag) shutdown();}
+            KeSwapChain(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous);
 
-            void init(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent);
-            
-            void init(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous);
-
-            void shutdown();
+            ~KeSwapChain();
 
             VkFormat findDepthFormat();
 
@@ -93,8 +89,6 @@ namespace k3::graphics {
             void createFramebuffers();
 
             void createSyncObjects();
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeDevice> m_device;
 

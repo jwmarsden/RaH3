@@ -7,34 +7,27 @@ namespace k3::graphics  {
         alignas(16) glm::vec3 color;
     };
 
-    void KeSimpleRenderSystem::init(std::shared_ptr<KeDevice> device, VkRenderPass renderPass) {
+    KeSimpleRenderSystem::KeSimpleRenderSystem(std::shared_ptr<KeDevice> device, VkRenderPass renderPass) : m_device {device} {
         KE_IN(KE_NOARG);
-        assert(!m_initFlag && "Already had init.");
-        m_device = device;
 
         createPipelineLayout();
         createPipeline(renderPass);
-        
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG);
     }
 
-    void KeSimpleRenderSystem::shutdown() {
+    KeSimpleRenderSystem::~KeSimpleRenderSystem() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-        
-            if(m_pipeline != nullptr) {
-                m_pipeline->shutdown();
-                m_pipeline = nullptr;
-            }
-            vkDestroyPipelineLayout(m_device->getDevice() , m_pipelineLayout, nullptr);
-        
-            if(m_device != nullptr) {
-                m_device = nullptr;
-            }
+  
+        if(m_pipeline != nullptr) {
+            m_pipeline = nullptr;
         }
+        vkDestroyPipelineLayout(m_device->getDevice() , m_pipelineLayout, nullptr);
+    
+        if(m_device != nullptr) {
+            m_device = nullptr;
+        }
+    
         KE_OUT(KE_NOARG);
     }
 
@@ -47,8 +40,8 @@ namespace k3::graphics  {
         pipelineConfig.renderPass = renderPass;
         pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-        m_pipeline = std::make_unique<KePipeline>();
-        m_pipeline->init(m_device, "./shaders/simple_shader.vert.spv", "./shaders/simple_shader.frag.spv", pipelineConfig);
+        m_pipeline = std::make_unique<KePipeline>(m_device, "./shaders/simple_shader.vert.spv", "./shaders/simple_shader.frag.spv", pipelineConfig);
+
         KE_OUT(KE_NOARG);
     }
 
@@ -70,7 +63,8 @@ namespace k3::graphics  {
         if(vkCreatePipelineLayout(m_device->getDevice() , &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
             KE_CRITICAL("Failed to create pipeline layout.");
         }
-        KE_OUT("(): _pipelineLayout@<{}>", fmt::ptr(&m_pipelineLayout));
+        
+        KE_OUT("(): m_pipelineLayout@<{}>", fmt::ptr(&m_pipelineLayout));
     }
 
     void KeSimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera) {

@@ -4,32 +4,29 @@ namespace k3::graphics  {
 
     void KeRenderer::init(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device) {
         KE_IN(KE_NOARG);
-        assert(!m_initFlag && "Already had init.");
+        
         m_window = window;
         m_device = device;
         recreateSwapChain();
         createCommandBuffers();
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG);
     }
 
     void KeRenderer::shutdown() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            freeCommandBuffers();
-            if(m_swapChain != nullptr) {
-                m_swapChain->shutdown();
-                m_swapChain = nullptr;
-            }
-            if(m_device != nullptr) {
-                m_device = nullptr;
-            }
-            if(m_window != nullptr) {
-                m_window = nullptr;
-            }
+
+        freeCommandBuffers();
+        if(m_swapChain != nullptr) {
+            m_swapChain = nullptr;
         }
+        if(m_device != nullptr) {
+            m_device = nullptr;
+        }
+        if(m_window != nullptr) {
+            m_window = nullptr;
+        }
+        
         KE_OUT(KE_NOARG);
     }
 
@@ -153,12 +150,10 @@ namespace k3::graphics  {
         vkDeviceWaitIdle(m_device->getDevice() );
         KE_DEBUG("Make new m_swapChain");
         if (m_swapChain == nullptr) {
-            m_swapChain = std::make_unique<KeSwapChain>();
-            m_swapChain->init(m_device, extent);
+            m_swapChain = std::make_unique<KeSwapChain>(m_device, extent);
         } else {
             KE_DEBUG("Creating temp swapchain.");
-            std::unique_ptr<KeSwapChain> newSwapChain = std::make_unique<KeSwapChain>();
-            newSwapChain->init(m_device, extent, std::move(m_swapChain));
+            std::unique_ptr<KeSwapChain> newSwapChain = std::make_unique<KeSwapChain>(m_device, extent, std::move(m_swapChain));
             
             KE_DEBUG("Moving temp swapchain to primary swapchain.");
             m_swapChain = std::move(newSwapChain);

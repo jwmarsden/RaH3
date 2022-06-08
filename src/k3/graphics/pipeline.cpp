@@ -2,24 +2,21 @@
 
 namespace k3::graphics {
 
-    void KePipeline::init(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) {
+    KePipeline::KePipeline(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) : m_device {device} {
         KE_IN(KE_NOARG); 
-        assert(!m_initFlag && "Already had init.");
-        m_device = device;
+
         createGraphicsPipeline(vertFilePath, fragFilePath, pipelineConfigInfo);
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG); 
     }
 
-    void KePipeline::shutdown() {
+    KePipeline::~KePipeline() {
         KE_IN(KE_NOARG); 
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            vkDestroyShaderModule(m_device->getDevice() , m_vertexShaderModule, nullptr);
-            vkDestroyShaderModule(m_device->getDevice() , m_fragmentShaderModule, nullptr);
-            vkDestroyPipeline(m_device->getDevice() , m_graphicsPipeline, nullptr);
-        }
+
+        vkDestroyShaderModule(m_device->getDevice() , m_vertexShaderModule, nullptr);
+        vkDestroyShaderModule(m_device->getDevice() , m_fragmentShaderModule, nullptr);
+        vkDestroyPipeline(m_device->getDevice() , m_graphicsPipeline, nullptr);
+
         KE_OUT(KE_NOARG); 
     }
 

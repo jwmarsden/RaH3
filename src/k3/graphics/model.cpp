@@ -5,10 +5,9 @@
 
 namespace k3::graphics {
 
-    void KeModel::init(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder) {
+    KeModel::KeModel(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder) : m_device {device}, m_builder {builder} {
         KE_IN(KE_NOARG);
-        assert(!m_initFlag && "Already had init.");
-        m_device = device;
+
         createVertexBuffers(builder.vertices);
         if(builder.indices.size() > 0) {
             m_hasIndexBuffer = true;
@@ -16,31 +15,30 @@ namespace k3::graphics {
         if(m_hasIndexBuffer) {
             createIndexBuffers(builder.indices);
         }
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG);
     }
 
-    void KeModel::shutdown() {
+    KeModel::~KeModel() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            vkDestroyBuffer(m_device->getDevice(), m_vertexBuffer, nullptr);
-            vkFreeMemory(m_device->getDevice() , m_vertexBufferMemory, nullptr);
-            if(m_hasIndexBuffer) {
-                vkDestroyBuffer(m_device->getDevice(), m_indexBuffer, nullptr);
-                vkFreeMemory(m_device->getDevice() , m_indexBufferMemory, nullptr);
-            }
 
-            if(m_device != nullptr) {
-                m_device = nullptr;
-            }
+        vkDestroyBuffer(m_device->getDevice(), m_vertexBuffer, nullptr);
+        vkFreeMemory(m_device->getDevice() , m_vertexBufferMemory, nullptr);
+        if(m_hasIndexBuffer) {
+            vkDestroyBuffer(m_device->getDevice(), m_indexBuffer, nullptr);
+            vkFreeMemory(m_device->getDevice() , m_indexBufferMemory, nullptr);
         }
+
+        if(m_device != nullptr) {
+            m_device = nullptr;
+        }
+        
         KE_OUT(KE_NOARG);
     }
 
     void KeModel::createVertexBuffers(const std::vector<Vertex> &vertices) {
         KE_IN(KE_NOARG);
+
         m_vertexCount = static_cast<uint32_t>(vertices.size());
         assert(m_vertexCount >= 3 && "Vertex Count Must Be At Least 3");
         VkDeviceSize bufferSize = sizeof(vertices[0]) * m_vertexCount;
@@ -76,6 +74,7 @@ namespace k3::graphics {
 
     void KeModel::createIndexBuffers(const std::vector<uint32_t> &indices) {
         KE_IN(KE_NOARG);
+        
         m_indexCount = static_cast<uint32_t>(indices.size());
         VkDeviceSize bufferSize = sizeof(indices[0]) * m_indexCount;
 

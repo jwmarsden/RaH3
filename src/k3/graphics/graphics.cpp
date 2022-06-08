@@ -13,9 +13,8 @@ namespace k3::graphics  {
         }   
     }
 
-    void KeGraphics::init(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window) {
+    KeGraphics::KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window) {
         KE_INFO("Kinetic Init {}.{}.{}",PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PROJECT_VER_PATCH);
-        assert(!m_initFlag && "Already had init.");
         m_logManger = logManager;
         KE_TRACE("Trace Logging On.");
         KE_DEBUG("Debug Logging On.");
@@ -23,13 +22,12 @@ namespace k3::graphics  {
         m_window = window;
         m_window->setWindowUserPointer(this);
 
-        m_device = std::make_shared<KeDevice>();
-        m_device->init(m_window);
+        m_device = std::make_shared<KeDevice>(m_window);
+
         KE_INFO("Kinetic has connected to the Vulkan.");
 
         m_renderer = std::make_shared<KeRenderer>();
         m_renderer->init(m_window, m_device);
-
         VkRenderPass renderPass = m_renderer->getSwapChainRenderPass();
  
         uint32_t minImageCount = 2;
@@ -115,52 +113,44 @@ namespace k3::graphics  {
             ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
     
-        m_renderSystem = std::make_shared<KeSimpleRenderSystem>();
-        m_renderSystem->init(m_device, renderPass);
-
-        m_initFlag = true;
+        m_renderSystem = std::make_shared<KeSimpleRenderSystem>(m_device, renderPass);
     }
 
-    void KeGraphics::shutdown() {
+    KeGraphics::~KeGraphics() {
         KE_IN(KE_NOARG);
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-            KE_INFO("Kinetic Shutting Down Graphics.");
 
-            vkDeviceWaitIdle(m_device->getDevice());
+        KE_INFO("Kinetic Shutting Down Graphics.");
 
-            ImGui_ImplVulkan_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
+        vkDeviceWaitIdle(m_device->getDevice());
 
-            if(m_renderSystem != nullptr) {
-                m_renderSystem->shutdown();
-                KE_TRACE("m_renderSystem remaining references: {}. Releasing.", m_renderSystem.use_count());
-                m_renderSystem = nullptr;
-            }
+        ImGui_ImplVulkan_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
 
-            if(m_renderer != nullptr) {
-                m_renderer->shutdown();
-                KE_TRACE("m_renderer remaining references: {}. Releasing.", m_renderer.use_count());
-                m_renderer = nullptr;
-            }
-
-            vkDeviceWaitIdle(m_device->getDevice());
-            if(m_device != nullptr) {
-                m_device->shutdown();
-                KE_TRACE("m_device remaining references: {}. Releasing.", m_device.use_count());
-                m_device = nullptr;
-            }
-            
-            if(m_window != nullptr) {
-                m_window = nullptr;
-            }
-
-            if(m_logManger != nullptr) {
-                m_logManger = nullptr;
-            }
+        if(m_renderSystem != nullptr) {
+            KE_TRACE("m_renderSystem remaining references: {}. Releasing.", m_renderSystem.use_count());
+            m_renderSystem = nullptr;
         }
+
+        if(m_renderer != nullptr) {
+            KE_TRACE("m_renderer remaining references: {}. Releasing.", m_renderer.use_count());
+            m_renderer = nullptr;
+        }
+
+        vkDeviceWaitIdle(m_device->getDevice());
+        if(m_device != nullptr) {
+            KE_TRACE("m_device remaining references: {}. Releasing.", m_device.use_count());
+            m_device = nullptr;
+        }
+        
+        if(m_window != nullptr) {
+            m_window = nullptr;
+        }
+
+        if(m_logManger != nullptr) {
+            m_logManger = nullptr;
+        }
+        
         KE_OUT(KE_NOARG);
     }
 
@@ -172,7 +162,7 @@ namespace k3::graphics  {
         ImGui::NewFrame();
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(280, 200), ImGuiCond_FirstUseEver);
-        ImGui::SetNextWindowCollapsed(true, ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowCollapsed(true, ImGuiCond_Appearing);
         ImGui::Begin(PROJECT_TITLE);
     }
 

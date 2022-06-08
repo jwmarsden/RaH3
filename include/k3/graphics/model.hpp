@@ -34,13 +34,9 @@ namespace k3::graphics {
 
             };
 
-            KeModel() = default;
+            KeModel(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder);
 
-            ~KeModel() {if(m_initFlag) shutdown();}
-
-            void init(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder);
-
-            void shutdown();
+            ~KeModel();
 
             void bind(VkCommandBuffer commandBuffer);
 
@@ -51,8 +47,6 @@ namespace k3::graphics {
             void createVertexBuffers(const std::vector<Vertex> &vertices);
 
             void createIndexBuffers(const std::vector<uint32_t> &indices);
-
-            bool m_initFlag = false;
 
             std::shared_ptr<KeDevice> m_device;
 
@@ -69,6 +63,8 @@ namespace k3::graphics {
             VkDeviceMemory m_indexBufferMemory;
 
             uint32_t m_indexCount;
+
+            const KeModel::Builder m_builder;
 
     };
 

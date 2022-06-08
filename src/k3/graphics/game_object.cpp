@@ -2,18 +2,15 @@
 
 namespace k3::graphics {
 
-    void KeGameObject::init() {
+    KeGameObject::KeGameObject() {
         KE_IN("(): m_id:{}", getId());
-        assert(!m_initFlag && "Already had init.");
-        m_initFlag = true;
+
         KE_OUT("(): m_id:{}", getId());
     }
 
-    void KeGameObject::shutdown() {
+    KeGameObject::~KeGameObject() {
         KE_IN("(): m_id:{}", getId());
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
+        if(model != nullptr) {
             model = nullptr;
         }
         KE_OUT("(): m_id:{}", getId());

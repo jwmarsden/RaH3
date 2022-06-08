@@ -37,9 +37,6 @@ std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
 std::vector<k3::graphics::KeGameObject> m_gameObjects;
 
 
-
-
-
 std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graphics::KeGraphics> graphics, glm::vec3 offset) {
     k3::graphics::KeModel::Builder modelBuilder{};
 
@@ -97,8 +94,7 @@ std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graph
 
     modelBuilder.indices = {0,  1,  2,  0,  3,  1,  4,  5,  6,  4,  7,  5,  8,  9,  10, 8,  11, 9, 12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23, 21};
 
-    std::shared_ptr<k3::graphics::KeModel> model = std::make_shared<k3::graphics::KeModel>();
-    model->init(graphics->getDevice(), modelBuilder);
+    std::shared_ptr<k3::graphics::KeModel> model = std::make_shared<k3::graphics::KeModel>(graphics->getDevice(), modelBuilder);
     return model;
 }
 
@@ -110,7 +106,6 @@ void loadGameObjects() {
     std::shared_ptr<k3::graphics::KeModel> model = createCubeModel(m_graphics, offset);
 
     auto cube = k3::graphics::KeGameObject::createGameObject();
-    cube.init();
     cube.model = model;
     cube.transform.translation = {0.f, 0.f, 5.f};
     cube.transform.scale = {.5f, .5f, .5f};
@@ -127,28 +122,21 @@ void init() {
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     const std::string WINDOW_NAME = "K3 Activated!";
-    m_window = std::make_shared<k3::graphics::KeWindow>();
-    m_window->init(WIDTH, HEIGHT, WINDOW_NAME);
+    m_window = std::make_shared<k3::graphics::KeWindow>(WIDTH, HEIGHT, WINDOW_NAME);
 
-    m_graphics = std::make_shared<k3::graphics::KeGraphics>();
-    m_graphics->init(m_logManger, m_window);
+    m_graphics = std::make_shared<k3::graphics::KeGraphics>(m_logManger, m_window);
 
     loadGameObjects();
 }
 
 void shutdown() {
     KE_INFO("Kinetic Shutting Down.");
-    for(auto& gameObject: m_gameObjects) {
-        gameObject.shutdown();
-    }
 
     if(m_graphics != nullptr) {
-        m_graphics->shutdown();
         m_graphics = nullptr;
     }
 
     if(m_window != nullptr) {
-        m_window->shutdown();
         KE_TRACE("m_window remaining references: {}. Releasing.", m_window.use_count());
         m_window = nullptr;
     }
@@ -187,7 +175,7 @@ void run() {
     windowController.init(m_window, m_graphics);
 
     auto viewerObject = k3::graphics::KeGameObject::createGameObject();
-    viewerObject.init();
+
     k3::controller::KeyboardMovementController cameraController{};
     cameraController.init();
 
@@ -273,7 +261,6 @@ void run() {
     }
     vkDeviceWaitIdle(device->getDevice());
     cameraController.shutdown();
-    viewerObject.shutdown();
     windowController.shutdown();
 }
 

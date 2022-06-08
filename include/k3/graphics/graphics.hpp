@@ -38,13 +38,9 @@ namespace k3::graphics {
 
         public: 
 
-            KeGraphics() = default;
+            KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window);
 
-            ~KeGraphics() {if(m_initFlag) shutdown();}
-
-            void init(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window);
-
-            void shutdown();
+            ~KeGraphics();
 
             void handleUpdate(float deltaTime);
 
@@ -61,8 +57,6 @@ namespace k3::graphics {
             void endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime);
 
         private:
-
-            bool m_initFlag = false;
 
             std::shared_ptr<logging::LogManger> m_logManger;
 

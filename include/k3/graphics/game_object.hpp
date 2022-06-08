@@ -74,14 +74,14 @@ namespace k3::graphics {
                 return KeGameObject(currentId++);
             };
 
+            KeGameObject();
+
+            ~KeGameObject();
+
             KeGameObject(const KeGameObject &) = delete;
             KeGameObject &operator=(const KeGameObject &) = delete;
             KeGameObject(KeGameObject &&) = default;
             KeGameObject &operator=(KeGameObject &&) = default;
-
-            void init();
-
-            void shutdown();
 
             id_t getId() { return m_id; };
 
@@ -94,9 +94,7 @@ namespace k3::graphics {
         private:
 
             KeGameObject(id_t objId) : m_id{objId} {};
-
-            bool m_initFlag = false;
-
+            
             id_t m_id;
     };
 }
