@@ -48,13 +48,13 @@ namespace k3::graphics {
 
             void createIndexBuffers(const std::vector<uint32_t> &indices);
 
-            std::shared_ptr<KeDevice> m_device;
+            std::shared_ptr<KeDevice> m_device = nullptr;
 
             VkBuffer m_vertexBuffer;
 
             VkDeviceMemory m_vertexBufferMemory;
 
-            uint32_t m_vertexCount;
+            uint32_t m_vertexCount = -1;
 
             bool m_hasIndexBuffer = false;
 
@@ -62,7 +62,7 @@ namespace k3::graphics {
 
             VkDeviceMemory m_indexBufferMemory;
 
-            uint32_t m_indexCount;
+            uint32_t m_indexCount = -1;
 
             const KeModel::Builder m_builder;
 

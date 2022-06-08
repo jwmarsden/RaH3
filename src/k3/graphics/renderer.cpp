@@ -2,18 +2,16 @@
 
 namespace k3::graphics  {
 
-    void KeRenderer::init(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device) {
+    KeRenderer::KeRenderer(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device) : m_window {window}, m_device {device} {
         KE_IN(KE_NOARG);
         
-        m_window = window;
-        m_device = device;
         recreateSwapChain();
         createCommandBuffers();
 
         KE_OUT(KE_NOARG);
     }
 
-    void KeRenderer::shutdown() {
+    KeRenderer::~KeRenderer() {
         KE_IN(KE_NOARG);
 
         freeCommandBuffers();
@@ -31,6 +29,7 @@ namespace k3::graphics  {
     }
 
     VkCommandBuffer KeRenderer::beginFrame() {
+        //KE_IN(KE_NOARG);
         assert(!m_isFrameStarted && "Cant call beginFrame while in progress.");
 
         auto result = m_swapChain->acquireNextImage(&m_currentImageIndex);
@@ -51,6 +50,7 @@ namespace k3::graphics  {
             KE_CRITICAL("Failed to begin recording command buffer!");
             throw std::runtime_error("Failed to begin recording command buffer!");
         }
+        //KE_OUT(KE_NOARG);
         return commandBuffer;
     }
 

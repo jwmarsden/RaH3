@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <memory>
+#include <string>
 
 namespace k3::graphics {
 
@@ -74,7 +75,10 @@ namespace k3::graphics {
                 return KeGameObject(currentId++);
             };
 
-            KeGameObject();
+            static KeGameObject createGameObject(std::string name) {
+                static id_t currentId = 0;
+                return KeGameObject(currentId++, name);
+            };
 
             ~KeGameObject();
 
@@ -85,6 +89,8 @@ namespace k3::graphics {
 
             id_t getId() { return m_id; };
 
+            
+
             std::shared_ptr<KeModel> model;
 
             glm::vec3 color{};
@@ -93,8 +99,12 @@ namespace k3::graphics {
         
         private:
 
-            KeGameObject(id_t objId) : m_id{objId} {};
+            KeGameObject(id_t objId, std::string name);
+
+            KeGameObject(id_t objId);
             
-            id_t m_id;
+            id_t m_id = -1;
+
+            std::string m_name;
     };
 }

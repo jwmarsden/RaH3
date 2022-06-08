@@ -33,7 +33,7 @@ namespace k3::graphics {
 
             void createPipeline(VkRenderPass renderPass);
 
-            std::shared_ptr<KeDevice> m_device;
+            std::shared_ptr<KeDevice> m_device = nullptr;
 
             VkPipelineLayout m_pipelineLayout;
 

@@ -36,7 +36,6 @@ std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
 
 std::vector<k3::graphics::KeGameObject> m_gameObjects;
 
-
 std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graphics::KeGraphics> graphics, glm::vec3 offset) {
     k3::graphics::KeModel::Builder modelBuilder{};
 
@@ -105,7 +104,7 @@ void loadGameObjects() {
 
     std::shared_ptr<k3::graphics::KeModel> model = createCubeModel(m_graphics, offset);
 
-    auto cube = k3::graphics::KeGameObject::createGameObject();
+    k3::graphics::KeGameObject cube = k3::graphics::KeGameObject::createGameObject("cube");
     cube.model = model;
     cube.transform.translation = {0.f, 0.f, 5.f};
     cube.transform.scale = {.5f, .5f, .5f};
@@ -131,6 +130,10 @@ void init() {
 
 void shutdown() {
     KE_INFO("Kinetic Shutting Down.");
+
+    if(!m_gameObjects.empty()) {
+        m_gameObjects.clear();
+    }
 
     if(m_graphics != nullptr) {
         m_graphics = nullptr;
@@ -160,21 +163,18 @@ void criticalStop(std::exception_ptr eptr) {
     shutdown();
 }
 
-
 void run() {
-
     k3::graphics::KeCamera camera{};
     camera.setViewTarget(glm::vec3(-20.f,-2.0f, 2.0f), glm::vec3(0.0f, 0.f, 1.5f));
 
     auto device = m_graphics->getDevice();
     auto renderer = m_graphics->getRenderer();
     auto renderSystem = m_graphics->getRenderSystem();
-    //auto swapChain = renderer->getSwapChain();
-    
+
     k3::controller::WindowBehaviorController windowController{};
     windowController.init(m_window, m_graphics);
 
-    auto viewerObject = k3::graphics::KeGameObject::createGameObject();
+    auto viewerObject = k3::graphics::KeGameObject::createGameObject("camera");
 
     k3::controller::KeyboardMovementController cameraController{};
     cameraController.init();
@@ -194,9 +194,11 @@ void run() {
 
     uint32_t frameCounter = 0;
 
+    KE_DEBUG("Enter Game Loop");
     while(!m_window->shouldClose()) {
         // This might block
         glfwPollEvents();
+        if(frameCounter % 1000 == 0) KE_DEBUG("GLFW Polled Events");
 
         // Check GUI Updates - Update the fps every 100 frames. 
         if(frameCounter%200 == 0) {
@@ -212,6 +214,7 @@ void run() {
                 fps = 1.f / (avgRenderTime/FRAME_TIME_SIZE_FLOAT);
             }
         }
+        if(frameCounter % 1000 == 0) KE_DEBUG("Calculated GUI Updates");
 
         auto newTime = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
@@ -223,15 +226,21 @@ void run() {
             currentFrameTime = 0;
 
         }
+        if(frameCounter % 1000 == 0) KE_DEBUG("Stored Time");
 
         cameraController.handleMovementInPlaneXZ(m_window, frameTime, viewerObject);
         camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
+
+        if(frameCounter % 1000 == 0) KE_DEBUG("Moved Camera");
         
         float aspect = renderer->getAspectRatio();
         //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
         camera.setPerspectiveProjection(glm::pi<float>()/4.f, aspect, 0.1f, 20.f);
+        if(frameCounter % 1000 == 0) KE_DEBUG("Set Projection");
 
+        //KE_TRACE("Enter Render Loop");
         if(auto commandBuffer = renderer->beginFrame()) {
+            if(frameCounter % 1000 == 0) KE_DEBUG("Entered Frame");
             renderer->beginSwapChainRenderPass(commandBuffer);
 
             // Render
@@ -239,11 +248,7 @@ void run() {
             m_graphics->beginGUIFrameRender(commandBuffer, frameTime);
 
             ImGuiIO& io = ImGui::GetIO(); (void)io;
-            if (io.WantCaptureMouse) {
-
-            }
             ImGui::Text("Average Render %.2f ms (%d fps)", avgRenderTime, fps);
-
             ImGui::PlotLines("Times", frameTimeStore, IM_ARRAYSIZE(frameTimeStore), ((currentFrameTime+1>=FRAME_TIME_SIZE) ? 0 : currentFrameTime+1));
             ImGui::Separator();
             ImGui::TextColored(ImVec4(0,0.6,0.8,1), "Mouse Settings");
@@ -256,12 +261,14 @@ void run() {
 
             renderer->endSwapChainRenderPass(commandBuffer);
             renderer->endFrame();
+            if(frameCounter % 1000 == 0) KE_DEBUG("Exit Frame");
         }
         frameCounter++;
     }
     vkDeviceWaitIdle(device->getDevice());
     cameraController.shutdown();
     windowController.shutdown();
+
 }
 
 int main() {

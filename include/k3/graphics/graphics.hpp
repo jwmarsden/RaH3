@@ -68,7 +68,6 @@ namespace k3::graphics {
 
             std::shared_ptr<KeRenderer> m_renderer = nullptr;
 
-            ImGui_ImplVulkanH_Window g_MainWindowData;
-            
+            ImGui_ImplVulkanH_Window g_MainWindowData {};
     };
 }

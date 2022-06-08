@@ -48,7 +48,7 @@ namespace k3::graphics {
 
             void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
-            std::shared_ptr<KeDevice> m_device;
+            std::shared_ptr<KeDevice> m_device = nullptr;
 
             VkPipeline m_graphicsPipeline;
 

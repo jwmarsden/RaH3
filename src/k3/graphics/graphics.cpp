@@ -26,8 +26,7 @@ namespace k3::graphics  {
 
         KE_INFO("Kinetic has connected to the Vulkan.");
 
-        m_renderer = std::make_shared<KeRenderer>();
-        m_renderer->init(m_window, m_device);
+        m_renderer = std::make_shared<KeRenderer>(m_window, m_device);
         VkRenderPass renderPass = m_renderer->getSwapChainRenderPass();
  
         uint32_t minImageCount = 2;

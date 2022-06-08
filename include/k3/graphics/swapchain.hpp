@@ -90,13 +90,13 @@ namespace k3::graphics {
 
             void createSyncObjects();
 
-            std::shared_ptr<KeDevice> m_device;
+            std::shared_ptr<KeDevice> m_device = nullptr;
 
             VkExtent2D m_windowExtent;
 
             VkSwapchainKHR m_swapChain = nullptr;
 
-            std::shared_ptr<KeSwapChain> oldSwapChain;
+            std::shared_ptr<KeSwapChain> oldSwapChain = nullptr;
             
             std::vector<VkImage> m_swapChainImages;
 

@@ -57,9 +57,9 @@ namespace k3::graphics {
 
             static void framebufferResizeCallback(GLFWwindow *glfwWindow, int width, int height);
 
-            int m_width;
+            int m_width = -1;
 
-            int m_height;
+            int m_height = -1;
 
             bool m_framebufferResized = false;
 

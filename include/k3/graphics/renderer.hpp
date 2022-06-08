@@ -17,13 +17,9 @@ namespace k3::graphics {
 
         public: 
 
-            KeRenderer() = default;
+            KeRenderer(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device);
 
-            ~KeRenderer() = default;
-
-            void init(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device);
-
-            void shutdown();
+            ~KeRenderer();
 
             bool isFrameInProgress() const {return m_isFrameStarted; }
 
@@ -73,9 +69,9 @@ namespace k3::graphics {
 
             uint32_t m_currentImageIndex;
 
-            int m_currentFrameIndex;
+            int m_currentFrameIndex = 0;
 
-            bool m_isFrameStarted;
+            bool m_isFrameStarted = false;
 
     };
 

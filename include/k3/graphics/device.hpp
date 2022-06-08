@@ -128,7 +128,7 @@ namespace k3::graphics {
 
             void createCommandPool();
 
-            std::shared_ptr<KeWindow> m_window;
+            std::shared_ptr<KeWindow> m_window = nullptr;
 
             VkInstance m_instance = nullptr; 
 
