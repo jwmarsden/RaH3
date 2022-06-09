@@ -2,6 +2,7 @@
 
 #include "log.h"
 
+#include "vertex.hpp"
 #include "device.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -14,29 +15,11 @@ namespace k3::graphics {
 
         public:
 
-            struct Vertex {
-
-                glm::vec3 position;
-
-                glm::vec3 color;
-
-                static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
-
-                static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
-
-            };
-
-            struct Builder {
-
-                std::vector<Vertex> vertices{};
-
-                std::vector<uint32_t> indices{};
-
-            };
-
-            KeModel(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder);
+            KeModel(std::shared_ptr<KeDevice> device, const K3Builder &builder);
 
             ~KeModel();
+
+            static std::unique_ptr<KeModel> createModelFromFile(std::shared_ptr<KeDevice> device, const std::string &filePath, bool flipY=false);
 
             void bind(VkCommandBuffer commandBuffer);
 
@@ -44,7 +27,7 @@ namespace k3::graphics {
 
         private:
 
-            void createVertexBuffers(const std::vector<Vertex> &vertices);
+            void createVertexBuffers(const std::vector<K3Vertex> &vertices);
 
             void createIndexBuffers(const std::vector<uint32_t> &indices);
 
@@ -64,7 +47,7 @@ namespace k3::graphics {
 
             uint32_t m_indexCount = -1;
 
-            const KeModel::Builder m_builder;
+            const K3Builder m_builder;
 
     };
 

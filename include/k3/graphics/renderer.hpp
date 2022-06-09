@@ -17,7 +17,7 @@ namespace k3::graphics {
 
         public: 
 
-            KeRenderer(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device);
+            KeRenderer(std::shared_ptr<K3Window> window, std::shared_ptr<KeDevice> device);
 
             ~KeRenderer();
 
@@ -59,7 +59,7 @@ namespace k3::graphics {
 
             void recreateSwapChain();
 
-            std::shared_ptr<KeWindow> m_window;
+            std::shared_ptr<K3Window> m_window;
 
             std::shared_ptr<KeDevice> m_device;
 

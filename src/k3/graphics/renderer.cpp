@@ -2,7 +2,7 @@
 
 namespace k3::graphics  {
 
-    KeRenderer::KeRenderer(std::shared_ptr<KeWindow> window, std::shared_ptr<KeDevice> device) : m_window {window}, m_device {device} {
+    KeRenderer::KeRenderer(std::shared_ptr<K3Window> window, std::shared_ptr<KeDevice> device) : m_window {window}, m_device {device} {
         KE_IN(KE_NOARG);
         
         recreateSwapChain();

@@ -34,11 +34,11 @@ namespace k3::controller {
 
             void shutdown();
 
-            void handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject);
+            void handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject);
 
-            void rotateInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject);
+            void rotateInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject);
 
-            void moveInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject);
+            void moveInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject);
 
             KeyMappings keys{};
 

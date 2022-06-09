@@ -38,13 +38,13 @@ namespace k3::graphics {
 
         public: 
 
-            KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window);
+            KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window);
 
             ~KeGraphics();
 
             void handleUpdate(float deltaTime);
 
-            std::shared_ptr<KeWindow> getWindow() {return m_window;};
+            std::shared_ptr<K3Window> getWindow() {return m_window;};
 
             std::shared_ptr<KeDevice> getDevice() {return m_device;};
 
@@ -60,7 +60,7 @@ namespace k3::graphics {
 
             std::shared_ptr<logging::LogManger> m_logManger;
 
-            std::shared_ptr<KeWindow> m_window = nullptr;
+            std::shared_ptr<K3Window> m_window = nullptr;
 
             std::shared_ptr<KeDevice> m_device = nullptr;
 

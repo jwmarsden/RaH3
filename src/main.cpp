@@ -10,8 +10,8 @@
 #include "k3/graphics/camera.hpp"
 #include "k3/graphics/game_object.hpp"
 
-#include "movement_controller.hpp"
-#include "window_behavior_controller.hpp"
+#include "k3/controller/movement_controller.hpp"
+#include "k3/controller/window_behavior_controller.hpp"
 
 #include <exception>
 #include <iostream>
@@ -30,86 +30,25 @@
 
 std::shared_ptr<k3::logging::LogManger> m_logManger = nullptr;
 
-std::shared_ptr<k3::graphics::KeWindow> m_window = nullptr;
+std::shared_ptr<k3::graphics::K3Window> m_window = nullptr;
 
 std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
 
 std::vector<k3::graphics::KeGameObject> m_gameObjects;
-
-std::shared_ptr<k3::graphics::KeModel> createCubeModel(std::shared_ptr<k3::graphics::KeGraphics> graphics, glm::vec3 offset) {
-    k3::graphics::KeModel::Builder modelBuilder{};
-
-    std::random_device rd;  
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(0.0, 1.0);
-
-    float r1 = dis(gen); float g1 = dis(gen); float b1 = dis(gen);
-    float r2 = dis(gen); float g2 = dis(gen); float b2 = dis(gen);
-    float r3 = dis(gen); float g3 = dis(gen); float b3 = dis(gen);
-    float r4 = dis(gen); float g4 = dis(gen); float b4 = dis(gen);
-    float r5 = dis(gen); float g5 = dis(gen); float b5 = dis(gen);
-    float r6 = dis(gen); float g6 = dis(gen); float b6 = dis(gen);
-
-    modelBuilder.vertices  = {
-        // left face 
-        {{-.5f, -.5f, -.5f}, {r1, g1, b1}},
-        {{-.5f, .5f, .5f}, {r1, g1, b1}},
-        {{-.5f, -.5f, .5f}, {r1, g1, b1}},
-        {{-.5f, .5f, -.5f}, {r1, g1, b1}},
-
-        // right face 
-        {{.5f, -.5f, -.5f}, {r2, g2, b2}},
-        {{.5f, .5f, .5f}, {r2, g2, b2}},
-        {{.5f, -.5f, .5f}, {r2, g2, b2}},
-        {{.5f, .5f, -.5f}, {r2, g2, b2}},
-
-        // top face 
-        {{-.5f, -.5f, -.5f}, {r3, g3, b3}},
-        {{.5f, -.5f, .5f}, {r3, g3, b3}},
-        {{-.5f, -.5f, .5f}, {r3, g3, b3}},
-        {{.5f, -.5f, -.5f}, {r3, g3, b3}},
-
-        // bottom face
-        {{-.5f, .5f, -.5f}, {r4, g4, b4}},
-        {{.5f, .5f, .5f}, {r4, g4, b4}},
-        {{-.5f, .5f, .5f}, {r4, g4, b4}},
-        {{.5f, .5f, -.5f}, {r4, g4, b4}},
-
-        // nose face 
-        {{-.5f, -.5f, 0.5f}, {r5, g5, b5}},
-        {{.5f, .5f, 0.5f}, {r5, g5, b5}},
-        {{-.5f, .5f, 0.5f}, {r5, g5, b5}},
-        {{.5f, -.5f, 0.5f}, {r5, g5, b5}},
-
-        // tail face
-        {{-.5f, -.5f, -0.5f}, {r6, g6, b6}},
-        {{.5f, .5f, -0.5f}, {r6, g6, b6}},
-        {{-.5f, .5f, -0.5f}, {r6, g6, b6}},
-        {{.5f, -.5f, -0.5f}, {r6, g6, b6}},
-    };
-    for (auto& v : modelBuilder.vertices ) {
-        v.position += offset;
-    }
-
-    modelBuilder.indices = {0,  1,  2,  0,  3,  1,  4,  5,  6,  4,  7,  5,  8,  9,  10, 8,  11, 9, 12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23, 21};
-
-    std::shared_ptr<k3::graphics::KeModel> model = std::make_shared<k3::graphics::KeModel>(graphics->getDevice(), modelBuilder);
-    return model;
-}
 
 void loadGameObjects() {
     KE_IN(KE_NOARG);
 
     glm::vec3 offset{};
 
-    std::shared_ptr<k3::graphics::KeModel> model = createCubeModel(m_graphics, offset);
+    std::shared_ptr<k3::graphics::KeModel> model = k3::graphics::KeModel::createModelFromFile(m_graphics->getDevice(), "models/teapot.obj", true);
 
-    k3::graphics::KeGameObject cube = k3::graphics::KeGameObject::createGameObject("cube");
-    cube.model = model;
-    cube.transform.translation = {0.f, 0.f, 5.f};
-    cube.transform.scale = {.5f, .5f, .5f};
+    k3::graphics::KeGameObject gameObject = k3::graphics::KeGameObject::createGameObject("teapot");
+    gameObject.model = model;
+    gameObject.transform.translation = {0.f, .5f, 5.f};
+    gameObject.transform.scale = {.5f, .5f, .5f};
 
-    m_gameObjects.push_back(std::move(cube));
+    m_gameObjects.push_back(std::move(gameObject));
 
     KE_OUT(KE_NOARG);
 }
@@ -121,7 +60,7 @@ void init() {
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
     const std::string WINDOW_NAME = "K3 Activated!";
-    m_window = std::make_shared<k3::graphics::KeWindow>(WIDTH, HEIGHT, WINDOW_NAME);
+    m_window = std::make_shared<k3::graphics::K3Window>(WIDTH, HEIGHT, WINDOW_NAME);
 
     m_graphics = std::make_shared<k3::graphics::KeGraphics>(m_logManger, m_window);
 
@@ -224,7 +163,6 @@ void run() {
         frameTimeStore[currentFrameTime] = frameTime;
         if(++currentFrameTime >= FRAME_TIME_SIZE) {
             currentFrameTime = 0;
-
         }
         if(frameCounter % 1000 == 0) KE_DEBUG("Stored Time");
 

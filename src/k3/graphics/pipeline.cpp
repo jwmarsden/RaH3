@@ -70,8 +70,8 @@ namespace k3::graphics {
         shaderStages[1].pNext = nullptr;
         shaderStages[1].pSpecializationInfo = nullptr;
 
-        auto bindingDescriptions = KeModel::Vertex::getBindingDescriptions();
-        auto attributeDescription = KeModel::Vertex::getAttributeDescriptions();
+        auto bindingDescriptions = K3Vertex::getBindingDescriptions();
+        auto attributeDescription = K3Vertex::getAttributeDescriptions();
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -144,6 +144,7 @@ namespace k3::graphics {
         configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
         configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
         configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+        //configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_LINE;
         configInfo.rasterizationInfo.lineWidth = 1.0f;
         configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
         configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;

@@ -11,16 +11,16 @@
 
 namespace k3::graphics {
 
-    class KeWindow {
+    class K3Window {
 
         public:
 
-            KeWindow(int width, int height, const std::string& windowName);
+            K3Window(int width, int height, const std::string& windowName);
 
-            ~KeWindow();
+            ~K3Window();
 
             bool shouldClose() { 
-                return glfwWindowShouldClose(m_window); 
+                return glfwWindowShouldClose(m_glfw_window); 
             }
 
             VkExtent2D getExtent() {
@@ -37,7 +37,7 @@ namespace k3::graphics {
                 KE_OUT(KE_NOARG);
             }
 
-            GLFWwindow *getGLFWwindow() const { return m_window; };
+            GLFWwindow *getGLFWwindow() const { return m_glfw_window; };
 
             void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
@@ -65,7 +65,7 @@ namespace k3::graphics {
 
             const std::string m_windowName;
 
-            GLFWwindow *m_window;
+            GLFWwindow *m_glfw_window;
 
             bool m_inputCaptured = false;
 

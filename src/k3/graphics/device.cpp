@@ -36,7 +36,7 @@ namespace k3::graphics {
         debugUtilCreateInfo.pUserData = nullptr; 
     }
 
-    KeDevice::KeDevice(std::shared_ptr<KeWindow> window) : m_window{window} {
+    KeDevice::KeDevice(std::shared_ptr<K3Window> window) : m_window{window} {
         KE_IN("(window@<{}>)", fmt::ptr(window));
 
         // Define Available Extensions

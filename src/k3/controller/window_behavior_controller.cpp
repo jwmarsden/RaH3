@@ -1,8 +1,8 @@
-#include "window_behavior_controller.hpp"
+#include "k3/controller/window_behavior_controller.hpp"
 
 namespace k3::controller {
 
-    void WindowBehaviorController::init(std::shared_ptr<graphics::KeWindow> window, std::shared_ptr<graphics::KeGraphics> graphics) {
+    void WindowBehaviorController::init(std::shared_ptr<graphics::K3Window> window, std::shared_ptr<graphics::KeGraphics> graphics) {
         KE_IN(KE_NOARG);
         assert(!m_initFlag && "Already had init.");
 

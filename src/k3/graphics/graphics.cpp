@@ -13,7 +13,7 @@ namespace k3::graphics  {
         }   
     }
 
-    KeGraphics::KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<KeWindow> window) {
+    KeGraphics::KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window) {
         KE_INFO("Kinetic Init {}.{}.{}",PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PROJECT_VER_PATCH);
         m_logManger = logManager;
         KE_TRACE("Trace Logging On.");

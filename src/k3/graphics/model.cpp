@@ -5,7 +5,7 @@
 
 namespace k3::graphics {
 
-    KeModel::KeModel(std::shared_ptr<KeDevice> device, const KeModel::Builder &builder) : m_device {device}, m_builder {builder} {
+    KeModel::KeModel(std::shared_ptr<KeDevice> device, const K3Builder &builder) : m_device {device}, m_builder {builder} {
         KE_IN(KE_NOARG);
 
         createVertexBuffers(builder.vertices);
@@ -36,7 +36,17 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeModel::createVertexBuffers(const std::vector<Vertex> &vertices) {
+    std::unique_ptr<KeModel> KeModel::createModelFromFile(std::shared_ptr<KeDevice> device, const std::string &filePath, bool flipY) {
+        KE_IN(KE_NOARG);
+        K3Builder builder{};
+        builder.loadModel(filePath, flipY);
+        KE_DEBUG("Vertex Count: {}", builder.vertices.size());
+
+        return std::make_unique<KeModel>(device, builder);
+        KE_OUT(KE_NOARG);
+    }
+
+    void KeModel::createVertexBuffers(const std::vector<K3Vertex> &vertices) {
         KE_IN(KE_NOARG);
 
         m_vertexCount = static_cast<uint32_t>(vertices.size());
@@ -128,30 +138,5 @@ namespace k3::graphics {
         //KE_OUT(KE_NOARG);
     }
 
-    std::vector<VkVertexInputBindingDescription> KeModel::Vertex::getBindingDescriptions() {
-        KE_IN(KE_NOARG);
-        std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-        bindingDescriptions[0].binding = 0;
-        bindingDescriptions[0].stride = sizeof(Vertex);
-        bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-        KE_OUT(KE_NOARG);
-        return bindingDescriptions;
-    }
-
-    std::vector<VkVertexInputAttributeDescription> KeModel::Vertex::getAttributeDescriptions() {
-        KE_IN(KE_NOARG);
-        std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
-        attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].binding = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(Vertex, position);
-
-        attributeDescriptions[1].location = 1;
-        attributeDescriptions[1].binding = 0;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(Vertex, color);
-        KE_OUT(KE_NOARG);
-        return attributeDescriptions;
-    }
 
 }

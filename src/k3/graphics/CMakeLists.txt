@@ -1,7 +1,11 @@
 
 set (CMAKE_CXX_STANDARD 17)
 
-#  Include Dear ImGui
+#  Include TinyObjectLoader
+set(TINY_DIR ${PROJECT_SOURCE_DIR}/vendor/tinyobjloader)
+include_directories(${TINY_DIR})
+
+# Include Dear ImGui
 set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/vendor/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 
@@ -69,3 +73,6 @@ configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.frag.
 configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.vert.spv ${CMAKE_BINARY_DIR}/Debug/shaders/simple_shader.vert.spv COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.frag.spv ${CMAKE_BINARY_DIR}/Release/shaders/simple_shader.frag.spv COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.vert.spv ${CMAKE_BINARY_DIR}/Release/shaders/simple_shader.vert.spv COPYONLY)
+
+configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Debug/models/teapot.obj COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Release/models/teapot.obj COPYONLY)

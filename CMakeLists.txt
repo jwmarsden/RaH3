@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(Kinetic! VERSION "0.4.2")
+project(Kinetic! VERSION "0.4.3")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -29,6 +29,7 @@ include_directories(${PROJECT_SOURCE_DIR}/vendor/spdlog/include)
 # Add children 
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/k3/logging)
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/k3/graphics)
+add_subdirectory(${PROJECT_SOURCE_DIR}/src/k3/controller)
 
 # Add Source
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cpp)
@@ -36,6 +37,6 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cpp)
 # Create Executable
 add_executable(kinetic ${sources})
 
-target_include_directories(graphics PUBLIC GLM_DIR)
+#target_include_directories(graphics PUBLIC GLM_DIR)
 
-target_link_libraries(kinetic logging graphics)
+target_link_libraries(kinetic logging graphics controller)

@@ -1,4 +1,4 @@
-#include "movement_controller.hpp"
+#include "k3/controller/movement_controller.hpp"
 
 namespace k3::controller {
 
@@ -19,14 +19,14 @@ namespace k3::controller {
     }
 
 
-    void KeyboardMovementController::handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject) {
+    void KeyboardMovementController::handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject) {
         if(window->isInputCaptured()) {
             rotateInPlaneXZ(window, dt, gameObject);
             moveInPlaneXZ(window, dt, gameObject);
         }
     }
 
-    void KeyboardMovementController::rotateInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject) {
+    void KeyboardMovementController::rotateInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject) {
         double xPos, yPos;
         glfwGetCursorPos(window->getGLFWwindow(), &xPos, &yPos);
 
@@ -58,7 +58,7 @@ namespace k3::controller {
         m_yPos = yPos;
     }
 
-    void KeyboardMovementController::moveInPlaneXZ(std::shared_ptr<k3::graphics::KeWindow> window, float dt, k3::graphics::KeGameObject& gameObject) {
+    void KeyboardMovementController::moveInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::KeGameObject& gameObject) {
         float yaw = gameObject.transform.rotation.y;
 
         const glm::vec3 forwardDirection{sin(yaw), 0.f, cos(yaw)};

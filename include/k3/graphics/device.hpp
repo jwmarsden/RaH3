@@ -36,7 +36,7 @@ namespace k3::graphics {
             const bool enableValidationLayers = false;
 #endif
 
-            KeDevice(std::shared_ptr<KeWindow> window);
+            KeDevice(std::shared_ptr<K3Window> window);
 
             ~KeDevice();
 
@@ -128,7 +128,7 @@ namespace k3::graphics {
 
             void createCommandPool();
 
-            std::shared_ptr<KeWindow> m_window = nullptr;
+            std::shared_ptr<K3Window> m_window = nullptr;
 
             VkInstance m_instance = nullptr; 
 
