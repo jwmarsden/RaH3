@@ -11,15 +11,15 @@
 
 namespace k3::graphics {
 
-    class KeModel {
+    class K3Model {
 
         public:
 
-            KeModel(std::shared_ptr<KeDevice> device, const K3Builder &builder);
+            K3Model(std::shared_ptr<K3Device> device, const K3Builder &builder);
 
-            ~KeModel();
+            ~K3Model();
 
-            static std::unique_ptr<KeModel> createModelFromFile(std::shared_ptr<KeDevice> device, const std::string &filePath, bool flipY=false);
+            static std::unique_ptr<K3Model> createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath, bool flipY=false);
 
             void bind(VkCommandBuffer commandBuffer);
 
@@ -31,7 +31,7 @@ namespace k3::graphics {
 
             void createIndexBuffers(const std::vector<uint32_t> &indices);
 
-            std::shared_ptr<KeDevice> m_device = nullptr;
+            std::shared_ptr<K3Device> m_device = nullptr;
 
             VkBuffer m_vertexBuffer;
 

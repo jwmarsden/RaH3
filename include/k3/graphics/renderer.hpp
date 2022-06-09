@@ -13,17 +13,17 @@
 
 namespace k3::graphics {
  
-    class KeRenderer {
+    class K3Renderer {
 
         public: 
 
-            KeRenderer(std::shared_ptr<K3Window> window, std::shared_ptr<KeDevice> device);
+            K3Renderer(std::shared_ptr<K3Window> window, std::shared_ptr<K3Device> device);
 
-            ~KeRenderer();
+            ~K3Renderer();
 
             bool isFrameInProgress() const {return m_isFrameStarted; }
 
-            //KeSwapChain getSwapChain() const {return *m_swapChain.get(); };
+            //K3SwapChain getSwapChain() const {return *m_swapChain.get(); };
 
             uint32_t getSwapChainImageCount() const {
                 return m_swapChain->imageCount();
@@ -61,9 +61,9 @@ namespace k3::graphics {
 
             std::shared_ptr<K3Window> m_window;
 
-            std::shared_ptr<KeDevice> m_device;
+            std::shared_ptr<K3Device> m_device;
 
-            std::unique_ptr<KeSwapChain> m_swapChain;
+            std::unique_ptr<K3SwapChain> m_swapChain;
 
             std::vector<VkCommandBuffer> m_commandBuffers;
 

@@ -5,7 +5,7 @@
 
 namespace k3::graphics {
 
-    KeModel::KeModel(std::shared_ptr<KeDevice> device, const K3Builder &builder) : m_device {device}, m_builder {builder} {
+    K3Model::K3Model(std::shared_ptr<K3Device> device, const K3Builder &builder) : m_device {device}, m_builder {builder} {
         KE_IN(KE_NOARG);
 
         createVertexBuffers(builder.vertices);
@@ -19,7 +19,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    KeModel::~KeModel() {
+    K3Model::~K3Model() {
         KE_IN(KE_NOARG);
 
         vkDestroyBuffer(m_device->getDevice(), m_vertexBuffer, nullptr);
@@ -36,17 +36,17 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    std::unique_ptr<KeModel> KeModel::createModelFromFile(std::shared_ptr<KeDevice> device, const std::string &filePath, bool flipY) {
+    std::unique_ptr<K3Model> K3Model::createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath, bool flipY) {
         KE_IN(KE_NOARG);
         K3Builder builder{};
         builder.loadModel(filePath, flipY);
         KE_DEBUG("Vertex Count: {}", builder.vertices.size());
 
-        return std::make_unique<KeModel>(device, builder);
+        return std::make_unique<K3Model>(device, builder);
         KE_OUT(KE_NOARG);
     }
 
-    void KeModel::createVertexBuffers(const std::vector<K3Vertex> &vertices) {
+    void K3Model::createVertexBuffers(const std::vector<K3Vertex> &vertices) {
         KE_IN(KE_NOARG);
 
         m_vertexCount = static_cast<uint32_t>(vertices.size());
@@ -82,7 +82,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeModel::createIndexBuffers(const std::vector<uint32_t> &indices) {
+    void K3Model::createIndexBuffers(const std::vector<uint32_t> &indices) {
         KE_IN(KE_NOARG);
         
         m_indexCount = static_cast<uint32_t>(indices.size());
@@ -117,7 +117,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }    
     
-    void KeModel::bind(VkCommandBuffer commandBuffer) {
+    void K3Model::bind(VkCommandBuffer commandBuffer) {
         //KE_IN(KE_NOARG);
         VkBuffer buffers[] = {m_vertexBuffer};
         VkDeviceSize offsets[] = {0};
@@ -128,7 +128,7 @@ namespace k3::graphics {
         //KE_OUT(KE_NOARG);
     }
 
-    void KeModel::draw(VkCommandBuffer commandBuffer) {
+    void K3Model::draw(VkCommandBuffer commandBuffer) {
         //KE_IN(KE_NOARG);
         if(m_hasIndexBuffer) {
             vkCmdDrawIndexed(commandBuffer, m_indexCount, 1, 0, 0, 0);

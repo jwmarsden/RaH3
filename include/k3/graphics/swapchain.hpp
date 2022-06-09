@@ -6,17 +6,17 @@
 
 namespace k3::graphics {
 
-    class KeSwapChain {
+    class K3SwapChain {
 
         public:
 
             static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-            KeSwapChain(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent);
+            K3SwapChain(std::shared_ptr<K3Device> deviceRef, VkExtent2D windowExtent);
 
-            KeSwapChain(std::shared_ptr<KeDevice> deviceRef, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous);
+            K3SwapChain(std::shared_ptr<K3Device> deviceRef, VkExtent2D windowExtent, std::unique_ptr<K3SwapChain> previous);
 
-            ~KeSwapChain();
+            ~K3SwapChain();
 
             VkFormat findDepthFormat();
 
@@ -64,7 +64,7 @@ namespace k3::graphics {
 
             VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
-            bool compareSwapFormats(const KeSwapChain &swapChain) const {
+            bool compareSwapFormats(const K3SwapChain &swapChain) const {
                 return swapChain.m_swapChainDepthFormat == m_swapChainDepthFormat && swapChain.m_swapChainImageFormat == m_swapChainImageFormat;
             }
 
@@ -90,13 +90,13 @@ namespace k3::graphics {
 
             void createSyncObjects();
 
-            std::shared_ptr<KeDevice> m_device = nullptr;
+            std::shared_ptr<K3Device> m_device = nullptr;
 
             VkExtent2D m_windowExtent;
 
             VkSwapchainKHR m_swapChain = nullptr;
 
-            std::shared_ptr<KeSwapChain> oldSwapChain = nullptr;
+            std::shared_ptr<K3SwapChain> oldSwapChain = nullptr;
             
             std::vector<VkImage> m_swapChainImages;
 

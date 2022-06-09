@@ -13,7 +13,7 @@ namespace k3::graphics  {
         }   
     }
 
-    KeGraphics::KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window) {
+    K3Graphics::K3Graphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window) {
         KE_INFO("Kinetic Init {}.{}.{}",PROJECT_VER_MAJOR,PROJECT_VER_MINOR,PROJECT_VER_PATCH);
         m_logManger = logManager;
         KE_TRACE("Trace Logging On.");
@@ -22,11 +22,11 @@ namespace k3::graphics  {
         m_window = window;
         m_window->setWindowUserPointer(this);
 
-        m_device = std::make_shared<KeDevice>(m_window);
+        m_device = std::make_shared<K3Device>(m_window);
 
         KE_INFO("Kinetic has connected to the Vulkan.");
 
-        m_renderer = std::make_shared<KeRenderer>(m_window, m_device);
+        m_renderer = std::make_shared<K3Renderer>(m_window, m_device);
         VkRenderPass renderPass = m_renderer->getSwapChainRenderPass();
  
         uint32_t minImageCount = 2;
@@ -112,10 +112,10 @@ namespace k3::graphics  {
             ImGui_ImplVulkan_DestroyFontUploadObjects();
         }
     
-        m_renderSystem = std::make_shared<KeSimpleRenderSystem>(m_device, renderPass);
+        m_renderSystem = std::make_shared<K3SimpleRenderSystem>(m_device, renderPass);
     }
 
-    KeGraphics::~KeGraphics() {
+    K3Graphics::~K3Graphics() {
         KE_IN(KE_NOARG);
 
         KE_INFO("Kinetic Shutting Down Graphics.");
@@ -153,7 +153,7 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    void KeGraphics::beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
+    void K3Graphics::beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
 
@@ -165,7 +165,7 @@ namespace k3::graphics  {
         ImGui::Begin(PROJECT_TITLE);
     }
 
-    void KeGraphics::endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
+    void K3Graphics::endGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime) {
 
         ImGui::End();
         ImGui::EndFrame();

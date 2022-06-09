@@ -2,7 +2,7 @@
 
 namespace k3::graphics { 
 
-    void KeCamera::setOrthographicProjection(float left, float right, float top, float bottom, float near_plane, float far_plane) {
+    void K3Camera::setOrthographicProjection(float left, float right, float top, float bottom, float near_plane, float far_plane) {
         m_projectionMatrix = glm::mat4{1.0f};
 
         m_projectionMatrix[0][0] = 2.f / (right - left);
@@ -14,7 +14,7 @@ namespace k3::graphics {
        
     }
 
-    void KeCamera::setPerspectiveProjection(float fov, float aspect, float near_plane, float far_plane) {
+    void K3Camera::setPerspectiveProjection(float fov, float aspect, float near_plane, float far_plane) {
         assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
         
         const float tanHalfFov = tan(fov / 2.f);
@@ -27,7 +27,7 @@ namespace k3::graphics {
         
     }
 
-    void KeCamera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up) {
+    void K3Camera::setViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up) {
         const glm::vec3 w{glm::normalize(direction)};
         const glm::vec3 u{glm::normalize(glm::cross(w, up))};
         const glm::vec3 v{glm::cross(w, u)};
@@ -47,11 +47,11 @@ namespace k3::graphics {
         m_viewMatrix[3][2] = -glm::dot(w, position);
     }
 
-    void KeCamera::setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
+    void K3Camera::setViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up) {
         setViewDirection(position, target - position, up);
     }
 
-    void KeCamera::setViewYXZ(glm::vec3 position, glm::vec3 rotation) {
+    void K3Camera::setViewYXZ(glm::vec3 position, glm::vec3 rotation) {
         const float c3 = glm::cos(rotation.z);
         const float s3 = glm::sin(rotation.z);
         const float c2 = glm::cos(rotation.x);

@@ -11,7 +11,7 @@
 
 namespace k3::graphics {
  
-    class KeCamera {
+    class K3Camera {
 
         public: 
 

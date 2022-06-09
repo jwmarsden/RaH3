@@ -28,13 +28,13 @@ namespace k3::graphics {
         uint32_t subpass = 0;
     };
 
-    class KePipeline {
+    class K3Pipeline {
 
         public:
 
-            KePipeline(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo);
+            K3Pipeline(std::shared_ptr<K3Device> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo);
 
-            ~KePipeline();
+            ~K3Pipeline();
             
             void bind(VkCommandBuffer commandBuffer);
 
@@ -48,7 +48,7 @@ namespace k3::graphics {
 
             void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
-            std::shared_ptr<KeDevice> m_device = nullptr;
+            std::shared_ptr<K3Device> m_device = nullptr;
 
             VkPipeline m_graphicsPipeline;
 

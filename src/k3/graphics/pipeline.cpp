@@ -2,7 +2,7 @@
 
 namespace k3::graphics {
 
-    KePipeline::KePipeline(std::shared_ptr<KeDevice> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) : m_device {device} {
+    K3Pipeline::K3Pipeline(std::shared_ptr<K3Device> device, const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) : m_device {device} {
         KE_IN(KE_NOARG); 
 
         createGraphicsPipeline(vertFilePath, fragFilePath, pipelineConfigInfo);
@@ -10,7 +10,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG); 
     }
 
-    KePipeline::~KePipeline() {
+    K3Pipeline::~K3Pipeline() {
         KE_IN(KE_NOARG); 
 
         vkDestroyShaderModule(m_device->getDevice() , m_vertexShaderModule, nullptr);
@@ -20,7 +20,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG); 
     }
 
-    std::vector<char> KePipeline::readFile(const std::string& filePath) {
+    std::vector<char> K3Pipeline::readFile(const std::string& filePath) {
         KE_IN(KE_NOARG);
 
         std::ifstream file(filePath, std::ios::ate | std::ios::binary);
@@ -45,7 +45,7 @@ namespace k3::graphics {
         return buffer;
     }
 
-    void KePipeline::createGraphicsPipeline(const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) {
+    void K3Pipeline::createGraphicsPipeline(const std::string& vertFilePath, const std::string& fragFilePath, const PipelineConfigInfo& pipelineConfigInfo) {
         KE_IN(KE_NOARG);
         auto vertCode = readFile(vertFilePath);
         auto fragCode = readFile(fragFilePath);
@@ -108,7 +108,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KePipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) {
+    void K3Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) {
         KE_IN(KE_NOARG);
         VkShaderModuleCreateInfo createShaderModuleInfo{};
         createShaderModuleInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -121,13 +121,13 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KePipeline::bind(VkCommandBuffer commandBuffer) {
+    void K3Pipeline::bind(VkCommandBuffer commandBuffer) {
         //KE_IN(KE_NOARG);
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
         //KE_OUT(KE_NOARG);
     }
 
-    void KePipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
+    void K3Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo) {
         KE_IN(KE_NOARG);
         
         configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

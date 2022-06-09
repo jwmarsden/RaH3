@@ -18,14 +18,14 @@
 
 namespace k3::graphics {
 
-    class KeSimpleRenderSystem {
+    class K3SimpleRenderSystem {
         public:
 
-            KeSimpleRenderSystem(std::shared_ptr<KeDevice> device, VkRenderPass renderPass);
+            K3SimpleRenderSystem(std::shared_ptr<K3Device> device, VkRenderPass renderPass);
 
-            ~KeSimpleRenderSystem();
+            ~K3SimpleRenderSystem();
 
-            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera);
+            void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<K3GameObject>& m_gameObjects, const K3Camera& camera);
 
         private:
 
@@ -33,10 +33,10 @@ namespace k3::graphics {
 
             void createPipeline(VkRenderPass renderPass);
 
-            std::shared_ptr<KeDevice> m_device = nullptr;
+            std::shared_ptr<K3Device> m_device = nullptr;
 
             VkPipelineLayout m_pipelineLayout;
 
-            std::unique_ptr<KePipeline> m_pipeline = nullptr;
+            std::unique_ptr<K3Pipeline> m_pipeline = nullptr;
     };
 }

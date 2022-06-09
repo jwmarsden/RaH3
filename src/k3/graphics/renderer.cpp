@@ -2,7 +2,7 @@
 
 namespace k3::graphics  {
 
-    KeRenderer::KeRenderer(std::shared_ptr<K3Window> window, std::shared_ptr<KeDevice> device) : m_window {window}, m_device {device} {
+    K3Renderer::K3Renderer(std::shared_ptr<K3Window> window, std::shared_ptr<K3Device> device) : m_window {window}, m_device {device} {
         KE_IN(KE_NOARG);
         
         recreateSwapChain();
@@ -11,7 +11,7 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    KeRenderer::~KeRenderer() {
+    K3Renderer::~K3Renderer() {
         KE_IN(KE_NOARG);
 
         freeCommandBuffers();
@@ -28,7 +28,7 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    VkCommandBuffer KeRenderer::beginFrame() {
+    VkCommandBuffer K3Renderer::beginFrame() {
         //KE_IN(KE_NOARG);
         assert(!m_isFrameStarted && "Cant call beginFrame while in progress.");
 
@@ -54,7 +54,7 @@ namespace k3::graphics  {
         return commandBuffer;
     }
 
-    void KeRenderer::endFrame() {
+    void K3Renderer::endFrame() {
         assert(m_isFrameStarted && "Cant call endFrame while frame is not in progress.");
         auto commandBuffer = getCurrentCommandBuffer();
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -72,10 +72,10 @@ namespace k3::graphics  {
             recreateSwapChain();
         }
         m_isFrameStarted = false;
-        m_currentFrameIndex = (m_currentFrameIndex + 1) % KeSwapChain::MAX_FRAMES_IN_FLIGHT;
+        m_currentFrameIndex = (m_currentFrameIndex + 1) % K3SwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
-    void KeRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
+    void K3Renderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
         assert(m_isFrameStarted && "Cant call beginSwapChainRenderPass while frame is not in progress.");
         assert(commandBuffer == getCurrentCommandBuffer() && "Can't begin render pass on command buffer from a different frame.");
         VkRenderPassBeginInfo renderPassBeginInfo{};
@@ -111,15 +111,15 @@ namespace k3::graphics  {
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
-    void KeRenderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
+    void K3Renderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
         assert(m_isFrameStarted && "Cant call endSwapChainRenderPass while frame is not in progress.");
         assert(commandBuffer == getCurrentCommandBuffer() && "Can't end render pass on command buffer from a different frame.");
         vkCmdEndRenderPass(commandBuffer);
     }
 
-    void KeRenderer::createCommandBuffers() {
+    void K3Renderer::createCommandBuffers() {
         KE_IN(KE_NOARG);
-        m_commandBuffers.resize(KeSwapChain::MAX_FRAMES_IN_FLIGHT);
+        m_commandBuffers.resize(K3SwapChain::MAX_FRAMES_IN_FLIGHT);
         VkCommandBufferAllocateInfo commandBufferAllocateInfo{};
         commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -133,14 +133,14 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    void KeRenderer::freeCommandBuffers() {
+    void K3Renderer::freeCommandBuffers() {
         KE_IN(KE_NOARG);
         vkFreeCommandBuffers(m_device->getDevice() , m_device->getCommandPool(), static_cast<uint32_t>(m_commandBuffers.size()),m_commandBuffers.data());
         m_commandBuffers.clear();
         KE_OUT(KE_NOARG);
     }
 
-    void KeRenderer::recreateSwapChain() {
+    void K3Renderer::recreateSwapChain() {
         KE_IN(KE_NOARG);
         auto extent = m_window->getExtent();
         while (extent.width == 0 || extent.height == 0) {
@@ -150,10 +150,10 @@ namespace k3::graphics  {
         vkDeviceWaitIdle(m_device->getDevice() );
         KE_DEBUG("Make new m_swapChain");
         if (m_swapChain == nullptr) {
-            m_swapChain = std::make_unique<KeSwapChain>(m_device, extent);
+            m_swapChain = std::make_unique<K3SwapChain>(m_device, extent);
         } else {
             KE_DEBUG("Creating temp swapchain.");
-            std::unique_ptr<KeSwapChain> newSwapChain = std::make_unique<KeSwapChain>(m_device, extent, std::move(m_swapChain));
+            std::unique_ptr<K3SwapChain> newSwapChain = std::make_unique<K3SwapChain>(m_device, extent, std::move(m_swapChain));
             
             KE_DEBUG("Moving temp swapchain to primary swapchain.");
             m_swapChain = std::move(newSwapChain);

@@ -2,14 +2,14 @@
 
 namespace k3::graphics { 
 
-    KeSwapChain::KeSwapChain(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {} {
+    K3SwapChain::K3SwapChain(std::shared_ptr<K3Device> device, VkExtent2D windowExtent) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {} {
         KE_IN("m_device<{}>,<{},{}>", fmt::ptr(&device), windowExtent.width, windowExtent.height);
         KE_DEBUG("Init Systems");
         initSystems();
         KE_OUT(KE_NOARG);  
     }
 
-    KeSwapChain::KeSwapChain(std::shared_ptr<KeDevice> device, VkExtent2D windowExtent, std::unique_ptr<KeSwapChain> previous) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {std::move(previous)} {
+    K3SwapChain::K3SwapChain(std::shared_ptr<K3Device> device, VkExtent2D windowExtent, std::unique_ptr<K3SwapChain> previous) : m_device {device}, m_windowExtent {windowExtent}, oldSwapChain {std::move(previous)} {
         KE_IN("(m_device<{}>,<{},{}>,previous@<{}>)", fmt::ptr(&device), windowExtent.width, windowExtent.height, fmt::ptr(&previous));
         
         KE_DEBUG("Init Systems");
@@ -26,7 +26,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);  
     }
 
-    void KeSwapChain::initSystems() {
+    void K3SwapChain::initSystems() {
         KE_IN(KE_NOARG);  
         
         createSwapChain();
@@ -39,7 +39,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);  
     }
 
-    KeSwapChain::~KeSwapChain() {
+    K3SwapChain::~K3SwapChain() {
         KE_IN(KE_NOARG);
 
         for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
@@ -84,7 +84,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeSwapChain::createSwapChain() {
+    void K3SwapChain::createSwapChain() {
         KE_IN(KE_NOARG);
         
         SwapChainSupportDetails swapChainSupport = m_device->getSwapChainSupport();
@@ -155,7 +155,7 @@ namespace k3::graphics {
         KE_OUT("(): m_swapChain@<{}>, m_swapChainImageFormat#{}, <{},{}>", fmt::ptr(&m_swapChain), m_swapChainImageFormat, m_swapChainExtent.width, m_swapChainExtent.height);
     }
 
-    VkSurfaceFormatKHR KeSwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
+    VkSurfaceFormatKHR K3SwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) {
         KE_IN(KE_NOARG);
         for (const auto &availableFormat : availableFormats) {
             if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
@@ -166,7 +166,7 @@ namespace k3::graphics {
         return availableFormats[0];
     }
 
-    VkPresentModeKHR KeSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
+    VkPresentModeKHR K3SwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) {
         KE_IN(KE_NOARG);
         for (const auto &availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
@@ -187,7 +187,7 @@ namespace k3::graphics {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    VkExtent2D KeSwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
+    VkExtent2D K3SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
         KE_IN(KE_NOARG);
         if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
             return capabilities.currentExtent;
@@ -200,7 +200,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeSwapChain::createImageViews() {
+    void K3SwapChain::createImageViews() {
         KE_IN(KE_NOARG);
         m_swapChainImageViews.resize(m_swapChainImages.size());
         for (size_t i = 0; i < m_swapChainImages.size(); i++) {
@@ -221,7 +221,7 @@ namespace k3::graphics {
         KE_OUT("(): m_swapChainImageViews[{}]@<{}>", m_swapChainImageViews.size(), fmt::ptr(&m_swapChainImageViews));
     }
 
-    void KeSwapChain::createRenderPass() {
+    void K3SwapChain::createRenderPass() {
         KE_IN(KE_NOARG);
         VkAttachmentDescription depthAttachment{};
         depthAttachment.format = findDepthFormat();
@@ -281,7 +281,7 @@ namespace k3::graphics {
         KE_OUT("(): m_renderPass@<{}>", fmt::ptr(&m_renderPass));
     }
 
-    VkFormat KeSwapChain::findDepthFormat() {
+    VkFormat K3SwapChain::findDepthFormat() {
         KE_IN(KE_NOARG);
         VkFormat format = m_device->findSupportedFormat({VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
         VK_IMAGE_TILING_OPTIMAL,
@@ -290,7 +290,7 @@ namespace k3::graphics {
         return format;
     }
 
-    void KeSwapChain::createDepthResources() {
+    void K3SwapChain::createDepthResources() {
         KE_IN(KE_NOARG);
         VkFormat depthFormat = findDepthFormat();
         m_swapChainDepthFormat = depthFormat;
@@ -338,7 +338,7 @@ namespace k3::graphics {
         KE_OUT("(): m_depthImages[{}]@<{}>, m_depthImageMemorys[{}]@<{}>", m_depthImages.size(), fmt::ptr(&m_depthImages), m_depthImageMemorys.size(), fmt::ptr(&m_depthImageMemorys));
     }
 
-    void KeSwapChain::createFramebuffers() {
+    void K3SwapChain::createFramebuffers() {
         KE_IN(KE_NOARG);
         m_swapChainFramebuffers.resize(imageCount());
         for (size_t i = 0; i < imageCount(); i++) {
@@ -362,7 +362,7 @@ namespace k3::graphics {
         KE_OUT("(): m_swapChainFramebuffers[{}]@<{}>", m_swapChainFramebuffers.size(), fmt::ptr(&m_swapChainFramebuffers));
     }
 
-    void KeSwapChain::createSyncObjects() {
+    void K3SwapChain::createSyncObjects() {
         KE_IN(KE_NOARG);
         m_imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         m_renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -387,7 +387,7 @@ namespace k3::graphics {
         KE_OUT("(): m_imageAvailableSemaphores[{}]@<{}>, m_renderFinishedSemaphores[{}]@<{}>, m_inFlightFences[{}]@<{}>", m_imageAvailableSemaphores.size(), fmt::ptr(&m_imageAvailableSemaphores), m_renderFinishedSemaphores.size(), fmt::ptr(&m_renderFinishedSemaphores), m_inFlightFences.size(), fmt::ptr(&m_inFlightFences));
     }
 
-    VkResult KeSwapChain::acquireNextImage(uint32_t *imageIndex) {
+    VkResult K3SwapChain::acquireNextImage(uint32_t *imageIndex) {
         vkWaitForFences(m_device->getDevice() , 1, &m_inFlightFences[m_currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
 
         VkResult result = vkAcquireNextImageKHR(m_device->getDevice() , m_swapChain, std::numeric_limits<uint64_t>::max(), 
@@ -396,7 +396,7 @@ namespace k3::graphics {
         return result;
     }
 
-    VkResult KeSwapChain::submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex) {
+    VkResult K3SwapChain::submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex) {
         if (m_imagesInFlight[*imageIndex] != VK_NULL_HANDLE) {
             vkWaitForFences(m_device->getDevice() , 1, &m_imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
         }

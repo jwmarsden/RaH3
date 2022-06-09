@@ -36,7 +36,7 @@ namespace k3::graphics {
         debugUtilCreateInfo.pUserData = nullptr; 
     }
 
-    KeDevice::KeDevice(std::shared_ptr<K3Window> window) : m_window{window} {
+    K3Device::K3Device(std::shared_ptr<K3Window> window) : m_window{window} {
         KE_IN("(window@<{}>)", fmt::ptr(window));
 
         // Define Available Extensions
@@ -78,7 +78,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    KeDevice::~KeDevice() {
+    K3Device::~K3Device() {
         KE_IN(KE_NOARG);
 
         if (m_commandPool != nullptr) {
@@ -110,7 +110,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeDevice::createInstance(std::vector<std::string> requiredInstanceExtensions) {
+    void K3Device::createInstance(std::vector<std::string> requiredInstanceExtensions) {
         KE_IN(KE_NOARG);
 
         bool validationLayerAvailable = false;
@@ -167,7 +167,7 @@ namespace k3::graphics {
         KE_OUT("(): m_instance@<{}>", fmt::ptr(&m_instance));
     }
 
-    bool KeDevice::checkValidationLayerSupport() {
+    bool K3Device::checkValidationLayerSupport() {
         KE_IN(KE_NOARG);
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -191,7 +191,7 @@ namespace k3::graphics {
         return layerFound;
     }
 
-    std::vector<std::string> KeDevice::getRequiredInstanceExtensions() {
+    std::vector<std::string> K3Device::getRequiredInstanceExtensions() {
         KE_IN(KE_NOARG);
         uint32_t glfwExtensionCount = 0;
         const char **glfwExtensions;
@@ -204,7 +204,7 @@ namespace k3::graphics {
         return extensions;
     }
 
-    std::vector<std::string> KeDevice::getAvailableInstanceExtensions() {
+    std::vector<std::string> K3Device::getAvailableInstanceExtensions() {
         KE_IN(KE_NOARG);
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -218,7 +218,7 @@ namespace k3::graphics {
         return extensions;
     }
 
-    void KeDevice::hasRequiredInstanceExtensions(std::vector<std::string> &requiredInstanceExtensions) {
+    void K3Device::hasRequiredInstanceExtensions(std::vector<std::string> &requiredInstanceExtensions) {
         KE_IN(KE_NOARG);
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -239,7 +239,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    void KeDevice::setupDebugMessenger() {
+    void K3Device::setupDebugMessenger() {
         KE_IN(KE_NOARG);
         if (!enableValidationLayers) {
             return;
@@ -252,13 +252,13 @@ namespace k3::graphics {
         KE_OUT("(): m_debugMessenger@<{}>", fmt::ptr(&m_debugMessenger));
     }
 
-    void KeDevice::createSurface() { 
+    void K3Device::createSurface() { 
         KE_IN(KE_NOARG);
         m_window->createWindowSurface(m_instance, &m_surface); 
         KE_OUT("(): m_surface@<{}>", fmt::ptr(&m_surface));
     }
 
-    std::vector<std::string> KeDevice::selectGPUDevice(std::vector<std::string> &requestPhysicalExtensions) {
+    std::vector<std::string> K3Device::selectGPUDevice(std::vector<std::string> &requestPhysicalExtensions) {
         KE_IN(KE_NOARG);
         uint32_t gpuCount = 0;
         vkEnumeratePhysicalDevices(m_instance, &gpuCount, nullptr);
@@ -334,7 +334,7 @@ namespace k3::graphics {
         return physicalDeviceAvailableExtensions;
     }
 
-    SwapChainSupportDetails KeDevice::querySwapChainSupport(VkPhysicalDevice device) {
+    SwapChainSupportDetails K3Device::querySwapChainSupport(VkPhysicalDevice device) {
         KE_IN(KE_NOARG);
         SwapChainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.capabilities);
@@ -354,7 +354,7 @@ namespace k3::graphics {
         return details;
     }
 
-    QueueFamilyIndices KeDevice::findQueueFamilies(VkPhysicalDevice device) {
+    QueueFamilyIndices K3Device::findQueueFamilies(VkPhysicalDevice device) {
         KE_IN(KE_NOARG);
         QueueFamilyIndices indices;
         uint32_t queueFamilyCount = 0;
@@ -382,7 +382,7 @@ namespace k3::graphics {
         return indices;
     }
 
-    void KeDevice::createLogicalDevice(std::vector<std::string> &requestPhysicalExtensions) {
+    void K3Device::createLogicalDevice(std::vector<std::string> &requestPhysicalExtensions) {
         KE_IN(KE_NOARG);
         QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice);
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
@@ -430,7 +430,7 @@ namespace k3::graphics {
         KE_OUT("(): m_device@<{}>, m_graphicsQueue@<{}>, m_presentQueue@<{}>", fmt::ptr(&m_device), fmt::ptr(&m_graphicsQueue), fmt::ptr(&m_presentQueue));
     }
 
-    void KeDevice::createDescriptorPool() {
+    void K3Device::createDescriptorPool() {
         KE_IN(KE_NOARG);
         VkDescriptorPoolSize pool_sizes[] =
         {
@@ -459,7 +459,7 @@ namespace k3::graphics {
         KE_OUT("(): m_descriptorPool@<{}>", fmt::ptr(&m_descriptorPool));
     }
 
-    void KeDevice::createCommandPool() {
+    void K3Device::createCommandPool() {
         KE_IN(KE_NOARG);
         QueueFamilyIndices queueFamilyIndices = findPhysicalQueueFamilies();
         VkCommandPoolCreateInfo poolInfo = {};
@@ -472,7 +472,7 @@ namespace k3::graphics {
         KE_OUT("(): m_commandPool@<{}>", fmt::ptr(&m_commandPool));
     }
 
-    VkFormat KeDevice::findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+    VkFormat K3Device::findSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
         KE_IN(KE_NOARG);
         for (VkFormat format : candidates) {
             VkFormatProperties props;
@@ -489,7 +489,7 @@ namespace k3::graphics {
         throw std::runtime_error("failed to find supported format!");
     }
 
-    void KeDevice::createImageWithInfo(const VkImageCreateInfo &imageInfo, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory) {
+    void K3Device::createImageWithInfo(const VkImageCreateInfo &imageInfo, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory &imageMemory) {
         KE_IN(KE_NOARG);
         if (vkCreateImage(m_device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
             KE_CRITICAL("failed to create image!");
@@ -516,7 +516,7 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    uint32_t KeDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+    uint32_t K3Device::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
         KE_IN(KE_NOARG);
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memProperties);
@@ -531,7 +531,7 @@ namespace k3::graphics {
     }
 
 
-    void KeDevice::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory) {
+    void K3Device::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory) {
         KE_IN(KE_NOARG);
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -559,7 +559,7 @@ namespace k3::graphics {
         KE_OUT("(): bufferMemory@<{}>", fmt::ptr(&bufferMemory));
     }
 
-    VkCommandBuffer KeDevice::beginSingleTimeCommands() {
+    VkCommandBuffer K3Device::beginSingleTimeCommands() {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -577,7 +577,7 @@ namespace k3::graphics {
         return commandBuffer;
     }
 
-    void KeDevice::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
+    void K3Device::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
         vkEndCommandBuffer(commandBuffer);
 
         VkSubmitInfo submitInfo{};
@@ -591,7 +591,7 @@ namespace k3::graphics {
         vkFreeCommandBuffers(m_device, m_commandPool, 1, &commandBuffer);
     }
 
-    void KeDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+    void K3Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
         VkBufferCopy copyRegion{};

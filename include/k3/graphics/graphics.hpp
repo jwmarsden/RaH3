@@ -34,23 +34,23 @@
 
 namespace k3::graphics {
  
-    class KeGraphics {
+    class K3Graphics {
 
         public: 
 
-            KeGraphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window);
+            K3Graphics(std::shared_ptr<logging::LogManger> logManager, std::shared_ptr<K3Window> window);
 
-            ~KeGraphics();
+            ~K3Graphics();
 
             void handleUpdate(float deltaTime);
 
             std::shared_ptr<K3Window> getWindow() {return m_window;};
 
-            std::shared_ptr<KeDevice> getDevice() {return m_device;};
+            std::shared_ptr<K3Device> getDevice() {return m_device;};
 
-            std::shared_ptr<KeSimpleRenderSystem> getRenderSystem() {return m_renderSystem;};
+            std::shared_ptr<K3SimpleRenderSystem> getRenderSystem() {return m_renderSystem;};
 
-            std::shared_ptr<KeRenderer> getRenderer() {return m_renderer;};
+            std::shared_ptr<K3Renderer> getRenderer() {return m_renderer;};
 
             void beginGUIFrameRender(VkCommandBuffer commandBuffer, float deltaTime);
 
@@ -62,11 +62,11 @@ namespace k3::graphics {
 
             std::shared_ptr<K3Window> m_window = nullptr;
 
-            std::shared_ptr<KeDevice> m_device = nullptr;
+            std::shared_ptr<K3Device> m_device = nullptr;
 
-            std::shared_ptr<KeSimpleRenderSystem> m_renderSystem = nullptr;
+            std::shared_ptr<K3SimpleRenderSystem> m_renderSystem = nullptr;
 
-            std::shared_ptr<KeRenderer> m_renderer = nullptr;
+            std::shared_ptr<K3Renderer> m_renderer = nullptr;
 
             ImGui_ImplVulkanH_Window g_MainWindowData {};
     };

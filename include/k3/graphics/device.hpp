@@ -26,7 +26,7 @@ namespace k3::graphics {
         bool isComplete() { return graphicsFamilyHasValue && presentFamilyHasValue; }
     };
 
-    class KeDevice {
+    class K3Device {
     
         public:
 
@@ -36,9 +36,9 @@ namespace k3::graphics {
             const bool enableValidationLayers = false;
 #endif
 
-            KeDevice(std::shared_ptr<K3Window> window);
+            K3Device(std::shared_ptr<K3Window> window);
 
-            ~KeDevice();
+            ~K3Device();
 
             VkInstance getInstance() { 
                 return m_instance; 

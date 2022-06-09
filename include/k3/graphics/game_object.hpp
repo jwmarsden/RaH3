@@ -65,33 +65,33 @@ namespace k3::graphics {
 
     };
 
-    class KeGameObject {
+    class K3GameObject {
 
         public:
             using id_t = unsigned int;
 
-            static KeGameObject createGameObject() {
+            static K3GameObject createGameObject() {
                 static id_t currentId = 0;
-                return KeGameObject(currentId++);
+                return K3GameObject(currentId++);
             };
 
-            static KeGameObject createGameObject(std::string name) {
+            static K3GameObject createGameObject(std::string name) {
                 static id_t currentId = 0;
-                return KeGameObject(currentId++, name);
+                return K3GameObject(currentId++, name);
             };
 
-            ~KeGameObject();
+            ~K3GameObject();
 
-            KeGameObject(const KeGameObject &) = delete;
-            KeGameObject &operator=(const KeGameObject &) = delete;
-            KeGameObject(KeGameObject &&) = default;
-            KeGameObject &operator=(KeGameObject &&) = default;
+            K3GameObject(const K3GameObject &) = delete;
+            K3GameObject &operator=(const K3GameObject &) = delete;
+            K3GameObject(K3GameObject &&) = default;
+            K3GameObject &operator=(K3GameObject &&) = default;
 
             id_t getId() { return m_id; };
 
             
 
-            std::shared_ptr<KeModel> model;
+            std::shared_ptr<K3Model> model;
 
             glm::vec3 color{};
 
@@ -99,9 +99,9 @@ namespace k3::graphics {
         
         private:
 
-            KeGameObject(id_t objId, std::string name);
+            K3GameObject(id_t objId, std::string name);
 
-            KeGameObject(id_t objId);
+            K3GameObject(id_t objId);
             
             id_t m_id = -1;
 

@@ -7,7 +7,7 @@ namespace k3::graphics  {
         alignas(16) glm::vec3 color;
     };
 
-    KeSimpleRenderSystem::KeSimpleRenderSystem(std::shared_ptr<KeDevice> device, VkRenderPass renderPass) : m_device {device} {
+    K3SimpleRenderSystem::K3SimpleRenderSystem(std::shared_ptr<K3Device> device, VkRenderPass renderPass) : m_device {device} {
         KE_IN(KE_NOARG);
 
         createPipelineLayout();
@@ -16,7 +16,7 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-    KeSimpleRenderSystem::~KeSimpleRenderSystem() {
+    K3SimpleRenderSystem::~K3SimpleRenderSystem() {
         KE_IN(KE_NOARG);
   
         if(m_pipeline != nullptr) {
@@ -31,21 +31,21 @@ namespace k3::graphics  {
         KE_OUT(KE_NOARG);
     }
 
-   void KeSimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
+   void K3SimpleRenderSystem::createPipeline(VkRenderPass renderPass) {
         KE_IN(KE_NOARG);
         assert(m_pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
         PipelineConfigInfo pipelineConfig{};
-        KePipeline::defaultPipelineConfigInfo(pipelineConfig);
+        K3Pipeline::defaultPipelineConfigInfo(pipelineConfig);
         pipelineConfig.renderPass = renderPass;
         pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-        m_pipeline = std::make_unique<KePipeline>(m_device, "./shaders/simple_shader.vert.spv", "./shaders/simple_shader.frag.spv", pipelineConfig);
+        m_pipeline = std::make_unique<K3Pipeline>(m_device, "./shaders/simple_shader.vert.spv", "./shaders/simple_shader.frag.spv", pipelineConfig);
 
         KE_OUT(KE_NOARG);
     }
 
-    void KeSimpleRenderSystem::createPipelineLayout() {
+    void K3SimpleRenderSystem::createPipelineLayout() {
         KE_IN(KE_NOARG);
 
         VkPushConstantRange pushConstantRange{};
@@ -67,7 +67,7 @@ namespace k3::graphics  {
         KE_OUT("(): m_pipelineLayout@<{}>", fmt::ptr(&m_pipelineLayout));
     }
 
-    void KeSimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<KeGameObject>& m_gameObjects, const KeCamera& camera) {
+    void K3SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<K3GameObject>& m_gameObjects, const K3Camera& camera) {
         m_pipeline->bind(commandBuffer);
 
         auto projectionView = camera.getProjection() * camera.getView();

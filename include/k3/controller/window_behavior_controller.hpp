@@ -18,7 +18,7 @@ namespace k3::controller {
 
             WindowBehaviorController() = default;
 
-            void init(std::shared_ptr<k3::graphics::K3Window> window, std::shared_ptr<k3::graphics::KeGraphics> m_graphics);
+            void init(std::shared_ptr<k3::graphics::K3Window> window, std::shared_ptr<k3::graphics::K3Graphics> m_graphics);
 
             void shutdown();
 
@@ -42,7 +42,7 @@ namespace k3::controller {
 
             std::shared_ptr<k3::graphics::K3Window> m_window = nullptr;
 
-            std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
+            std::shared_ptr<k3::graphics::K3Graphics> m_graphics = nullptr;
 
     };
 

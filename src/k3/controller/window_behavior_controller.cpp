@@ -2,7 +2,7 @@
 
 namespace k3::controller {
 
-    void WindowBehaviorController::init(std::shared_ptr<graphics::K3Window> window, std::shared_ptr<graphics::KeGraphics> graphics) {
+    void WindowBehaviorController::init(std::shared_ptr<graphics::K3Window> window, std::shared_ptr<graphics::K3Graphics> graphics) {
         KE_IN(KE_NOARG);
         assert(!m_initFlag && "Already had init.");
 
@@ -52,7 +52,7 @@ namespace k3::controller {
     }
 
     void WindowBehaviorController::keyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods) {
-        auto graphics = reinterpret_cast<k3::graphics::KeGraphics *>(glfwGetWindowUserPointer(glfwWindow));
+        auto graphics = reinterpret_cast<k3::graphics::K3Graphics *>(glfwGetWindowUserPointer(glfwWindow));
         auto window = graphics->getWindow();
 
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -62,7 +62,7 @@ namespace k3::controller {
     }
 
     void WindowBehaviorController::mouseButtonCallback(GLFWwindow* glfwWindow, int button, int action, int mods) {
-        auto graphics = reinterpret_cast<k3::graphics::KeGraphics *>(glfwGetWindowUserPointer(glfwWindow));
+        auto graphics = reinterpret_cast<k3::graphics::K3Graphics *>(glfwGetWindowUserPointer(glfwWindow));
         auto window = graphics->getWindow();
 
         ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -75,7 +75,7 @@ namespace k3::controller {
     }
 
     void WindowBehaviorController::windowFocusCallback(GLFWwindow* glfwWindow, int focused) {
-        auto graphics = reinterpret_cast<k3::graphics::KeGraphics *>(glfwGetWindowUserPointer(glfwWindow));
+        auto graphics = reinterpret_cast<k3::graphics::K3Graphics *>(glfwGetWindowUserPointer(glfwWindow));
         auto window = graphics->getWindow();
 
         if (focused) {
@@ -88,7 +88,7 @@ namespace k3::controller {
     }
 
     void WindowBehaviorController::windowMaximizeCallback(GLFWwindow* glfwWindow, int maximized) {
-        auto graphics = reinterpret_cast<k3::graphics::KeGraphics *>(glfwGetWindowUserPointer(glfwWindow));
+        auto graphics = reinterpret_cast<k3::graphics::K3Graphics *>(glfwGetWindowUserPointer(glfwWindow));
         auto window = graphics->getWindow();
 
         if (maximized) {
@@ -101,7 +101,7 @@ namespace k3::controller {
     }
 
     void WindowBehaviorController::cursorPositionCallback(GLFWwindow* glfwWindow, double xpos, double ypos) {
-        auto graphics = reinterpret_cast<k3::graphics::KeGraphics *>(glfwGetWindowUserPointer(glfwWindow));
+        auto graphics = reinterpret_cast<k3::graphics::K3Graphics *>(glfwGetWindowUserPointer(glfwWindow));
         auto window = graphics->getWindow();
 
         KE_DEBUG("Kinetic Window Mouse Move ({},{})!", xpos, ypos);

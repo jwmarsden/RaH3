@@ -32,18 +32,18 @@ std::shared_ptr<k3::logging::LogManger> m_logManger = nullptr;
 
 std::shared_ptr<k3::graphics::K3Window> m_window = nullptr;
 
-std::shared_ptr<k3::graphics::KeGraphics> m_graphics = nullptr;
+std::shared_ptr<k3::graphics::K3Graphics> m_graphics = nullptr;
 
-std::vector<k3::graphics::KeGameObject> m_gameObjects;
+std::vector<k3::graphics::K3GameObject> m_gameObjects;
 
 void loadGameObjects() {
     KE_IN(KE_NOARG);
 
     glm::vec3 offset{};
 
-    std::shared_ptr<k3::graphics::KeModel> model = k3::graphics::KeModel::createModelFromFile(m_graphics->getDevice(), "models/teapot.obj", true);
+    std::shared_ptr<k3::graphics::K3Model> model = k3::graphics::K3Model::createModelFromFile(m_graphics->getDevice(), "models/teapot.obj", true);
 
-    k3::graphics::KeGameObject gameObject = k3::graphics::KeGameObject::createGameObject("teapot");
+    k3::graphics::K3GameObject gameObject = k3::graphics::K3GameObject::createGameObject("teapot");
     gameObject.model = model;
     gameObject.transform.translation = {0.f, .5f, 5.f};
     gameObject.transform.scale = {.5f, .5f, .5f};
@@ -62,7 +62,7 @@ void init() {
     const std::string WINDOW_NAME = "K3 Activated!";
     m_window = std::make_shared<k3::graphics::K3Window>(WIDTH, HEIGHT, WINDOW_NAME);
 
-    m_graphics = std::make_shared<k3::graphics::KeGraphics>(m_logManger, m_window);
+    m_graphics = std::make_shared<k3::graphics::K3Graphics>(m_logManger, m_window);
 
     loadGameObjects();
 }
@@ -103,7 +103,7 @@ void criticalStop(std::exception_ptr eptr) {
 }
 
 void run() {
-    k3::graphics::KeCamera camera{};
+    k3::graphics::K3Camera camera{};
     camera.setViewTarget(glm::vec3(-20.f,-2.0f, 2.0f), glm::vec3(0.0f, 0.f, 1.5f));
 
     auto device = m_graphics->getDevice();
@@ -113,7 +113,7 @@ void run() {
     k3::controller::WindowBehaviorController windowController{};
     windowController.init(m_window, m_graphics);
 
-    auto viewerObject = k3::graphics::KeGameObject::createGameObject("camera");
+    auto viewerObject = k3::graphics::K3GameObject::createGameObject("camera");
 
     k3::controller::KeyboardMovementController cameraController{};
     cameraController.init();
@@ -133,7 +133,7 @@ void run() {
 
     uint32_t frameCounter = 0;
 
-    KE_DEBUG("Enter Game Loop");
+    KE_TRACE_SPAM("Enter Game Loop");
     while(!m_window->shouldClose()) {
         // This might block
         glfwPollEvents();
@@ -153,7 +153,7 @@ void run() {
                 fps = 1.f / (avgRenderTime/FRAME_TIME_SIZE_FLOAT);
             }
         }
-        if(frameCounter % 1000 == 0) KE_DEBUG("Calculated GUI Updates");
+        KE_TRACE_SPAM("Calculated GUI Updates");
 
         auto newTime = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
@@ -164,7 +164,7 @@ void run() {
         if(++currentFrameTime >= FRAME_TIME_SIZE) {
             currentFrameTime = 0;
         }
-        if(frameCounter % 1000 == 0) KE_DEBUG("Stored Time");
+        KE_TRACE_SPAM("Stored Time");
 
         cameraController.handleMovementInPlaneXZ(m_window, frameTime, viewerObject);
         camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
