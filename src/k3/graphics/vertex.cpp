@@ -6,6 +6,18 @@
 #include <cassert>
 #include <cstring>
 
+
+namespace std {
+    template <>
+    struct hash<k3::graphics::K3Vertex> {
+        size_t operator()(k3::graphics::K3Vertex const &vertex) const {
+            size_t seed = 0;
+            ke::graphics::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+            return seed;
+        }
+    };
+}
+
 namespace k3::graphics {
 
     std::vector<VkVertexInputBindingDescription> K3Vertex::getBindingDescriptions() {
@@ -48,6 +60,8 @@ namespace k3::graphics {
         vertices.clear();
         indices.clear();
 
+        std::unordered_map<K3Vertex, uint32_t> uniqueVertices {};
+
         for(const auto &shape : shapes) {
             for(const auto &index : shape.mesh.indices) {
                 K3Vertex vertex{};
@@ -86,7 +100,12 @@ namespace k3::graphics {
                     };
                 }
 
-                vertices.push_back(vertex);
+                if(uniqueVertices.count(vertex) == 0) {
+                    uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
+                    vertices.push_back(vertex);
+                } 
+
+                indices.push_back(uniqueVertices[vertex]);
             }
         }
     }

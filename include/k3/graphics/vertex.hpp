@@ -2,13 +2,18 @@
 
 #include "log.h"
 
+#include "utils.hpp"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/hash.hpp>
 
 #include "vulkan/vulkan.h"
 
 #include <vector>
+#include <unordered_map>
 
 namespace k3::graphics {
 
@@ -25,6 +30,10 @@ namespace k3::graphics {
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
 
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+        bool operator==(const K3Vertex other) const {
+            return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
+        }
 
     };
 

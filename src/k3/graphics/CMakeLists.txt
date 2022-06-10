@@ -74,6 +74,6 @@ configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.vert.
 configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.frag.spv ${CMAKE_BINARY_DIR}/Release/shaders/simple_shader.frag.spv COPYONLY)
 configure_file(${PROJECT_SOURCE_DIR}/src/k3/graphics/shaders/simple_shader.vert.spv ${CMAKE_BINARY_DIR}/Release/shaders/simple_shader.vert.spv COPYONLY)
 
-configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/models/teapot.obj COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Debug/models/teapot.obj COPYONLY)
-configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Release/models/teapot.obj COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/models/teapot.obj COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Debug/models/teapot.obj COPYONLY)
+#configure_file(${PROJECT_SOURCE_DIR}/models/teapot.obj ${CMAKE_BINARY_DIR}/Release/models/teapot.obj COPYONLY)

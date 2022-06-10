@@ -12,7 +12,7 @@ logs/
 *.slo
 *.lo
 *.o
-*.obj
+build/*.obj
 
 # Precompiled Headers
 *.gch
