@@ -2,20 +2,32 @@
 
 #include <memory>
 
+namespace std {
+    template <>
+    struct hash<k3::logging::K3LogReference> {
+        size_t operator()(k3::logging::K3LogReference const &logReference) const {
+            size_t seed = 0;
+            k3::hashCombine(seed, logReference.file, logReference.function, logReference.line);
+            return seed;
+        }
+    };
+}
+
 namespace k3::logging {
 
+
+    std::unordered_map<K3LogReference, std::chrono::steady_clock::time_point> logReferences {};
+
     LogManger::LogManger() {
+
         
     }
 
     LogManger::~LogManger() {
-        KE_IN(KE_NOARG);
         spdlog::shutdown();
-        KE_OUT(KE_NOARG);
     }
 
     void LogManger::initialise() {
-        KE_IN(KE_NOARG);
         auto inConsoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         inConsoleSink->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e %s:%#] >%!%v%$");
         std::vector<spdlog::sink_ptr> inSinks {inConsoleSink};
@@ -47,15 +59,31 @@ namespace k3::logging {
         defaultLogger->set_level(spdlog::level::info);
         defaultLogger->flush_on(spdlog::level::info);
         spdlog::register_logger(defaultLogger);
-        KE_OUT(KE_NOARG);
     }
 
-    bool LogManger::check(spdlog::source_loc loc) {
-        auto newTime = std::chrono::high_resolution_clock::now();
+    bool LogManger::check(spdlog::source_loc location) {
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         
+        K3LogReference logReference {};
+        logReference.file = location.filename;
+        logReference.function = location.funcname;
+        logReference.line = location.line;
 
+        if(logReferences.count(logReference) == 0) {
+            logReferences[logReference] = now;
+            return true;
+        }  else {
+            std::chrono::steady_clock::time_point reference = logReferences[logReference];
 
-        //KE_TRACE("{}.{}[{}]@{}", loc.filename, loc.funcname, loc.line, newTime.time_since_epoch);
-        return true;
+            uint64_t delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - reference).count();
+
+            if(delta >= LOG_SPAM_INTERVAL_MS) {
+                logReferences[logReference] = now;
+                //KE_TRACE("{}.{}[{}]@{}", logReference.file, logReference.function, logReference.line, delta);
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 }

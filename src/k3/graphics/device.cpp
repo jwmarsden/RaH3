@@ -148,20 +148,24 @@ namespace k3::graphics {
 
         KE_DEBUG("Enable Validation Layers: {}",  enableValidationLayers);
         // Enable Validation Layers
+        
         if (enableValidationLayers && validationLayerAvailable) {
             VkDebugUtilsMessengerCreateInfoEXT debugUtilCreateInfo;
             populateDebugMessengerCreateInfo(debugUtilCreateInfo);
             instanceCreateInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT *) &debugUtilCreateInfo;
             instanceCreateInfo.enabledLayerCount = static_cast<uint32_t>(m_validationLayers.size());
-            instanceCreateInfo.ppEnabledLayerNames = m_validationLayers.data();          
+            instanceCreateInfo.ppEnabledLayerNames = m_validationLayers.data();
+            KE_DEBUG("Create Instance");
+            if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to create instance!");
+            }          
         } else {
             instanceCreateInfo.enabledLayerCount = 0;
             instanceCreateInfo.pNext = nullptr;
-        }
-
-        KE_DEBUG("Create Instance");
-        if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance) != VK_SUCCESS) {
-            KE_CRITICAL("Failed to create instance!");
+            KE_DEBUG("Create Instance");
+            if (vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance) != VK_SUCCESS) {
+                KE_CRITICAL("Failed to create instance!");
+            }   
         }
 
         KE_OUT("(): m_instance@<{}>", fmt::ptr(&m_instance));

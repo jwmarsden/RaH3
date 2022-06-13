@@ -34,17 +34,13 @@ namespace k3::graphics {
 
             std::shared_ptr<K3Device> m_device = nullptr;
 
-            VkBuffer m_vertexBuffer;
-
-            VkDeviceMemory m_vertexBufferMemory;
+            std::unique_ptr<K3Buffer> m_vertexBuffer;
 
             uint32_t m_vertexCount = -1;
 
             bool m_hasIndexBuffer = false;
 
-            VkBuffer m_indexBuffer;
-
-            VkDeviceMemory m_indexBufferMemory;
+            std::unique_ptr<K3Buffer> m_indexBuffer;
 
             uint32_t m_indexCount = -1;
 

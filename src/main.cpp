@@ -127,11 +127,11 @@ void run() {
 
     uint32_t frameCounter = 0;
 
-    KE_TRACE_SPAM("Enter Game Loop");
+    KE_TRACE("Enter Game Loop");
     while(!m_window->shouldClose()) {
         // This might block
         glfwPollEvents();
-        if(frameCounter % 1000 == 0) KE_DEBUG("GLFW Polled Events");
+        KE_TRACE_SPAM("GLFW Polled Events");
 
         // Check GUI Updates - Update the fps every 100 frames. 
         if(frameCounter%200 == 0) {
@@ -163,16 +163,15 @@ void run() {
         cameraController.handleMovementInPlaneXZ(m_window, frameTime, viewerObject);
         camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
-        if(frameCounter % 1000 == 0) KE_DEBUG("Moved Camera");
+        KE_TRACE_SPAM("Moved Camera");
         
         float aspect = renderer->getAspectRatio();
         //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
         camera.setPerspectiveProjection(glm::pi<float>()/4.f, aspect, 0.1f, 20.f);
-        if(frameCounter % 1000 == 0) KE_DEBUG("Set Projection");
+        KE_TRACE_SPAM("Set Projection");
 
-        //KE_TRACE("Enter Render Loop");
+        KE_TRACE_SPAM("Enter Frame {}", frameCounter);
         if(auto commandBuffer = renderer->beginFrame()) {
-            if(frameCounter % 1000 == 0) KE_DEBUG("Entered Frame");
             renderer->beginSwapChainRenderPass(commandBuffer);
 
             // Render
@@ -193,7 +192,7 @@ void run() {
 
             renderer->endSwapChainRenderPass(commandBuffer);
             renderer->endFrame();
-            if(frameCounter % 1000 == 0) KE_DEBUG("Exit Frame");
+            KE_TRACE_SPAM("Exit Frame {}", frameCounter);
         }
         frameCounter++;
     }

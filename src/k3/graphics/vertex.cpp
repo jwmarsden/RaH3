@@ -12,7 +12,7 @@ namespace std {
     struct hash<k3::graphics::K3Vertex> {
         size_t operator()(k3::graphics::K3Vertex const &vertex) const {
             size_t seed = 0;
-            ke::graphics::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
+            k3::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
             return seed;
         }
     };
