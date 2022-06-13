@@ -1,8 +1,6 @@
 #pragma once
 
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/fmt/ranges.h"
+#include "log.h"
 
 #include "utils.hpp"
 
@@ -10,10 +8,6 @@
 #include <vector>
 #include <unordered_map>
 
-#define KE_IN_LOGGER_NAME "ke_in_log"
-#define KE_OUT_LOGGER_NAME "ke_out_log"
-#define KE_DETAILED_LOGGER_NAME "ke_detail_log"
-#define KE_DEFAULT_LOGGER_NAME "ke_default_log"
 
 namespace k3::logging {
 
@@ -45,7 +39,7 @@ namespace k3::logging {
 
             void initialise();
 
-            bool check(spdlog::source_loc location);
+            bool check(std::string file, std::string function, int line);
 
         private:
 

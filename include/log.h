@@ -1,7 +1,7 @@
 #pragma once
 
 #include "config.h"
-#include "k3/logging/log_manager.hpp"
+//#include "k3/logging/log_manager.hpp"
 
 #if K3_BUILD_TYPE == 1
 #   if !defined(SPDLOG_ACTIVE_LEVEL)
@@ -17,12 +17,21 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/fmt/ranges.h"
 
+#define KE_IN_LOGGER_NAME "ke_in_log"
+#define KE_OUT_LOGGER_NAME "ke_out_log"
+#define KE_DETAILED_LOGGER_NAME "ke_detail_log"
+#define KE_DEFAULT_LOGGER_NAME "ke_default_log"
+
 #define KE_NOARG "()"
 
 #if K3_BUILD_TYPE == 1
-#define KE_IN_SPAM(...)     if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_IN_LOGGER_NAME) != nullptr) {(spdlog::get(KE_IN_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}
-#define KE_OUT_SPAM(...)    if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_OUT_LOGGER_NAME) != nullptr) {(spdlog::get(KE_OUT_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}
-#define KE_TRACE_SPAM(...)  if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_DETAILED_LOGGER_NAME) != nullptr) {SPDLOG_LOGGER_TRACE(spdlog::get(KE_DETAILED_LOGGER_NAME), __VA_ARGS__);}
+//#define KE_IN_SPAM(...)     if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_IN_LOGGER_NAME) != nullptr) {(spdlog::get(KE_IN_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}
+//#define KE_OUT_SPAM(...)    if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_OUT_LOGGER_NAME) != nullptr) {(spdlog::get(KE_OUT_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}
+//#define KE_TRACE_SPAM(...)  if (k3::logging::LogManger::getInstance().check(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}) && spdlog::get(KE_DETAILED_LOGGER_NAME) != nullptr) {SPDLOG_LOGGER_TRACE(spdlog::get(KE_DETAILED_LOGGER_NAME), __VA_ARGS__);}
+#define KE_IN_SPAM(...)     (void) 0;
+#define KE_OUT_SPAM(...)    (void) 0;
+#define KE_TRACE_SPAM(...)  (void) 0;
+
 
 #define KE_IN(...)          if (spdlog::get(KE_IN_LOGGER_NAME) != nullptr) {(spdlog::get(KE_IN_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}
 #define KE_OUT(...)         if (spdlog::get(KE_OUT_LOGGER_NAME) != nullptr) {(spdlog::get(KE_OUT_LOGGER_NAME))->log(spdlog::source_loc{__FILE__, __LINE__, static_cast<const char *>(__FUNCTION__)}, spdlog::level::trace, __VA_ARGS__);}

@@ -61,13 +61,13 @@ namespace k3::logging {
         spdlog::register_logger(defaultLogger);
     }
 
-    bool LogManger::check(spdlog::source_loc location) {
+    bool LogManger::check(std::string file, std::string function, int line) {
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         
         K3LogReference logReference {};
-        logReference.file = location.filename;
-        logReference.function = location.funcname;
-        logReference.line = location.line;
+        logReference.file = file;
+        logReference.function = function;
+        logReference.line = line;
 
         if(logReferences.count(logReference) == 0) {
             logReferences[logReference] = now;

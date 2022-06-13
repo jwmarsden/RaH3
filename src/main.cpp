@@ -6,8 +6,10 @@
 
 #include "k3/graphics/window.hpp"
 #include "k3/graphics/device.hpp"
+#include "k3/graphics/buffer.hpp"
 #include "k3/graphics/graphics.hpp"
 #include "k3/graphics/camera.hpp"
+#include "k3/graphics/frame_info.hpp"
 #include "k3/graphics/game_object.hpp"
 
 #include "k3/controller/movement_controller.hpp"
@@ -35,6 +37,12 @@ std::shared_ptr<k3::graphics::K3Window> m_window = nullptr;
 std::shared_ptr<k3::graphics::K3Graphics> m_graphics = nullptr;
 
 std::vector<k3::graphics::K3GameObject> m_gameObjects;
+
+
+struct GlobalUbo {
+    glm::mat4 projectionView {1.f};
+    glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f,-3.f,-1.f});
+};
 
 void loadGameObjects() {
     KE_IN(KE_NOARG);
@@ -97,12 +105,22 @@ void criticalStop(std::exception_ptr eptr) {
 }
 
 void run() {
-    k3::graphics::K3Camera camera{};
-    camera.setViewTarget(glm::vec3(-20.f,-2.0f, 2.0f), glm::vec3(0.0f, 0.f, 1.5f));
-
     auto device = m_graphics->getDevice();
     auto renderer = m_graphics->getRenderer();
     auto renderSystem = m_graphics->getRenderSystem();
+
+    k3::graphics::K3Buffer globalUboBuffer {
+        m_graphics->getDevice(),
+        sizeof(GlobalUbo),
+        k3::graphics::K3SwapChain::MAX_FRAMES_IN_FLIGHT,
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+        device->m_vk_properties.limits.minUniformBufferOffsetAlignment
+    };
+    globalUboBuffer.map();
+
+    k3::graphics::K3Camera camera{};
+    camera.setViewTarget(glm::vec3(-20.f,-2.0f, 2.0f), glm::vec3(0.0f, 0.f, 1.5f));
 
     k3::controller::WindowBehaviorController windowController{};
     windowController.init(m_window, m_graphics);
@@ -172,10 +190,24 @@ void run() {
 
         KE_TRACE_SPAM("Enter Frame {}", frameCounter);
         if(auto commandBuffer = renderer->beginFrame()) {
-            renderer->beginSwapChainRenderPass(commandBuffer);
+            int frameIndex = renderer->getFrameIndex();
+            k3::graphics::K3FrameInfo frameInfo {
+                frameIndex,
+                frameTime,
+                commandBuffer,
+                camera,
+            };
+
+            // Update
+            GlobalUbo ubo{};
+            ubo.projectionView = camera.getProjection() * camera.getView();
+            globalUboBuffer.writeToBuffer(&ubo, frameIndex);
+            globalUboBuffer.flushIndex(frameIndex);
 
             // Render
-            renderSystem->renderGameObjects(commandBuffer, m_gameObjects, camera);
+
+            renderer->beginSwapChainRenderPass(commandBuffer);
+            renderSystem->renderGameObjects(frameInfo, m_gameObjects);
             m_graphics->beginGUIFrameRender(commandBuffer, frameTime);
 
             ImGuiIO& io = ImGui::GetIO(); (void)io;

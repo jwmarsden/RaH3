@@ -326,14 +326,14 @@ namespace k3::graphics {
         for (const auto &physicalDeviceExtension : physicalDeviceExtensions) {
             physicalDeviceAvailableExtensions.push_back(physicalDeviceExtension.extensionName);
         }
-        vkGetPhysicalDeviceProperties(m_physicalDevice, &properties);
+        vkGetPhysicalDeviceProperties(m_physicalDevice, &m_vk_properties);
 
         // Checks and Logs
         if (m_physicalDevice == VK_NULL_HANDLE) {
             KE_CRITICAL("Failed to find GPU!");
         }
-        KE_DEBUG("Use Physical GPU ({}): \"{}\"", properties.deviceID, properties.deviceName);
-        KE_INFO("Kinetic Selected Physical GPU: \"{}\"", properties.deviceName);
+        KE_DEBUG("Use Physical GPU ({}): \"{}\"", m_vk_properties.deviceID, m_vk_properties.deviceName);
+        KE_INFO("Kinetic Selected Physical GPU: \"{}\"", m_vk_properties.deviceName);
         KE_OUT("(): physicalDeviceAvailableExtensions[{}]@<{}>, m_physicalDevice@<{}>", physicalDeviceAvailableExtensions.size(), fmt::ptr(&physicalDeviceAvailableExtensions), fmt::ptr(&m_physicalDevice));
         return physicalDeviceAvailableExtensions;
     }

@@ -100,6 +100,8 @@ namespace k3::graphics {
 
             void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
 
+            VkPhysicalDeviceProperties m_vk_properties;
+
         private:
 
             void createInstance(std::vector<std::string> requiredInstanceExtensions);

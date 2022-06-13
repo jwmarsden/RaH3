@@ -67,10 +67,10 @@ namespace k3::graphics  {
         KE_OUT("(): m_pipelineLayout@<{}>", fmt::ptr(&m_pipelineLayout));
     }
 
-    void K3SimpleRenderSystem::renderGameObjects(VkCommandBuffer commandBuffer, std::vector<K3GameObject>& m_gameObjects, const K3Camera& camera) {
-        m_pipeline->bind(commandBuffer);
+    void K3SimpleRenderSystem::renderGameObjects(k3::graphics::K3FrameInfo& frameInfo, std::vector<K3GameObject>& m_gameObjects) {
+        m_pipeline->bind(frameInfo.commandBuffer);
 
-        auto projectionView = camera.getProjection() * camera.getView();
+        auto projectionView = frameInfo.camera.getProjection() * frameInfo.camera.getView();
 
         for(auto& gameObject: m_gameObjects) {
             
@@ -78,9 +78,9 @@ namespace k3::graphics  {
             push.color = gameObject.color;
             push.transform = projectionView * gameObject.transform.mat4();
 
-            vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
-            gameObject.model->bind(commandBuffer);
-            gameObject.model->draw(commandBuffer);
+            vkCmdPushConstants(frameInfo.commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
+            gameObject.model->bind(frameInfo.commandBuffer);
+            gameObject.model->draw(frameInfo.commandBuffer);
         }
     }
 
