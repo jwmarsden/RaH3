@@ -54,8 +54,7 @@ void loadGameObjects() {
 }
 
 void init() {
-    m_logManger = std::make_shared<k3::logging::LogManger>();
-    m_logManger->init();
+    k3::logging::LogManger::getInstance().initialise();
 
     const uint32_t WIDTH = 800;
     const uint32_t HEIGHT = 600;
@@ -83,12 +82,7 @@ void shutdown() {
         m_window = nullptr;
     }
 
-    KE_INFO("Kinetic Has Shut Down All Subsystems. Shutting Down Logging.");
-    // Leave _logManger last
-    if(m_logManger != nullptr) {
-        m_logManger->shutdown();
-        m_logManger = nullptr;
-    }
+    KE_INFO("Kinetic Has Shut Down All Subsystems. Exit Logging.");
 }
 
 void criticalStop(std::exception_ptr eptr) {

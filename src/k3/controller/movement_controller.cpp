@@ -20,10 +20,12 @@ namespace k3::controller {
 
 
     void KeyboardMovementController::handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::K3GameObject& gameObject) {
+        KE_IN_SPAM(KE_NOARG);
         if(window->isInputCaptured()) {
             rotateInPlaneXZ(window, dt, gameObject);
             moveInPlaneXZ(window, dt, gameObject);
         }
+        KE_OUT_SPAM(KE_NOARG);
     }
 
     void KeyboardMovementController::rotateInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::K3GameObject& gameObject) {

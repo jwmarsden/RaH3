@@ -4,7 +4,18 @@
 
 namespace k3::logging {
 
-    void LogManger::init() {
+    LogManger::LogManger() {
+        
+    }
+
+    LogManger::~LogManger() {
+        KE_IN(KE_NOARG);
+        spdlog::shutdown();
+        KE_OUT(KE_NOARG);
+    }
+
+    void LogManger::initialise() {
+        KE_IN(KE_NOARG);
         auto inConsoleSink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
         inConsoleSink->set_pattern("%^[%Y-%m-%d %H:%M:%S.%e %s:%#] >%!%v%$");
         std::vector<spdlog::sink_ptr> inSinks {inConsoleSink};
@@ -36,15 +47,15 @@ namespace k3::logging {
         defaultLogger->set_level(spdlog::level::info);
         defaultLogger->flush_on(spdlog::level::info);
         spdlog::register_logger(defaultLogger);
-
-        m_initFlag = true;
+        KE_OUT(KE_NOARG);
     }
 
-    void LogManger::shutdown() {
-        if(m_initFlag) {
-            m_initFlag = false;
-            spdlog::shutdown();
-        }
-    }
+    bool LogManger::check(spdlog::source_loc loc) {
+        auto newTime = std::chrono::high_resolution_clock::now();
+        
 
+
+        //KE_TRACE("{}.{}[{}]@{}", loc.filename, loc.funcname, loc.line, newTime.time_since_epoch);
+        return true;
+    }
 }
