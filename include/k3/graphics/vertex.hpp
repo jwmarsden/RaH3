@@ -1,6 +1,6 @@
 #pragma once
 
-#include "log.h"
+#include "k3/logging/log.hpp"
 
 #include "utils.hpp"
 
@@ -43,7 +43,7 @@ namespace k3::graphics {
 
         std::vector<uint32_t> indices{};
 
-        void loadModel(const std::string &filePath, bool flipY=false);
+        void loadModel(const std::string &filePath);
 
     };
 

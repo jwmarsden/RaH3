@@ -1,7 +1,6 @@
 #pragma once
 
-#include "log.h"
-#include "k3/logging/log_manager.hpp"
+#include "k3/logging/log.hpp"
 
 #include "k3/graphics/window.hpp"
 #include "k3/graphics/game_object.hpp"
@@ -26,13 +25,9 @@ namespace k3::controller {
                 int moveDown = GLFW_KEY_Q;
             };
 
-            KeyboardMovementController() = default;
+            KeyboardMovementController();
 
-            ~KeyboardMovementController() {if(m_initFlag) shutdown();}
-
-            void init();
-
-            void shutdown();
+            ~KeyboardMovementController();
 
             void handleMovementInPlaneXZ(std::shared_ptr<k3::graphics::K3Window> window, float dt, k3::graphics::K3GameObject& gameObject);
 
@@ -51,8 +46,6 @@ namespace k3::controller {
             bool invert = false;
 
         private:
-
-            bool m_initFlag = false;
 
             double m_xPos = 0.0;
             

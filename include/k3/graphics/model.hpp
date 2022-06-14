@@ -1,6 +1,6 @@
 #pragma once
 
-#include "log.h"
+#include "k3/logging/log.hpp"
 
 #include "vertex.hpp"
 #include "device.hpp"
@@ -20,7 +20,7 @@ namespace k3::graphics {
 
             ~K3Model();
 
-            static std::unique_ptr<K3Model> createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath, bool flipY=false);
+            static std::unique_ptr<K3Model> createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath);
 
             void bind(VkCommandBuffer commandBuffer);
 

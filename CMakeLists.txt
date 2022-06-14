@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(Kinetic! VERSION "0.4.3")
+project(Kinetic! VERSION "0.4.4")
 
 set(CMAKE_CXX_STANDARD 20)
 

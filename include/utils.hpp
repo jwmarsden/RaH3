@@ -1,5 +1,11 @@
 #pragma once
 
+#include <iostream>
+#include <iomanip>
+#include <functional>
+#include <string>
+#include <unordered_set>
+
 namespace k3 {
 
     // from: https://stackoverflow.com/a/57595105

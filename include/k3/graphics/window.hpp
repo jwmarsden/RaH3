@@ -1,6 +1,6 @@
 #pragma once
 
-#include "log.h"
+#include "k3/logging/log.hpp"
  
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>

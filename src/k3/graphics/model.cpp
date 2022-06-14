@@ -29,10 +29,10 @@ namespace k3::graphics {
         KE_OUT(KE_NOARG);
     }
 
-    std::unique_ptr<K3Model> K3Model::createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath, bool flipY) {
+    std::unique_ptr<K3Model> K3Model::createModelFromFile(std::shared_ptr<K3Device> device, const std::string &filePath) {
         KE_IN(KE_NOARG);
         K3Builder builder{};
-        builder.loadModel(filePath, flipY);
+        builder.loadModel(filePath);
         KE_DEBUG("Vertex Count: {}", builder.vertices.size());
         KE_OUT(KE_NOARG);
         return std::make_unique<K3Model>(device, builder);

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "log.h"
-#include "k3/logging/log_manager.hpp"
+#include "k3/logging/log.hpp"
 
 #include "k3/graphics/window.hpp"
 #include "k3/graphics/graphics.hpp"
@@ -16,11 +15,9 @@ namespace k3::controller {
                 int escapeWindow = GLFW_KEY_ESCAPE;
             };
 
-            WindowBehaviorController() = default;
+            WindowBehaviorController(std::shared_ptr<k3::graphics::K3Window> window, std::shared_ptr<k3::graphics::K3Graphics> m_graphics);
 
-            void init(std::shared_ptr<k3::graphics::K3Window> window, std::shared_ptr<k3::graphics::K3Graphics> m_graphics);
-
-            void shutdown();
+            ~WindowBehaviorController();
 
         private:
 
@@ -37,8 +34,6 @@ namespace k3::controller {
             static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
             void registerForWindowEvents();
-
-            bool m_initFlag = false;
 
             std::shared_ptr<k3::graphics::K3Window> m_window = nullptr;
 

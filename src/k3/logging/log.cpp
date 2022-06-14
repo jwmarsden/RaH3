@@ -1,4 +1,4 @@
-#include "k3/logging/log_manager.hpp"
+#include "k3/logging/log.hpp"
 
 #include <memory>
 
@@ -15,16 +15,16 @@ namespace std {
 
 namespace k3::logging {
 
-
-    std::unordered_map<K3LogReference, std::chrono::steady_clock::time_point> logReferences {};
+    std::unordered_map<K3LogReference, K3LogStore> logReferences;
 
     LogManger::LogManger() {
-
+        KE_IN(KE_NOARG);
         
+        KE_OUT(KE_NOARG);
     }
 
     LogManger::~LogManger() {
-        spdlog::shutdown();
+
     }
 
     void LogManger::initialise() {
@@ -61,6 +61,10 @@ namespace k3::logging {
         spdlog::register_logger(defaultLogger);
     }
 
+    void LogManger::shutdown() {
+        spdlog::shutdown();
+    }
+
     bool LogManger::check(std::string file, std::string function, int line) {
         std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
         
@@ -70,20 +74,40 @@ namespace k3::logging {
         logReference.line = line;
 
         if(logReferences.count(logReference) == 0) {
-            logReferences[logReference] = now;
+            K3LogStore store {0, now};
+            logReferences[logReference] = store;
             return true;
         }  else {
-            std::chrono::steady_clock::time_point reference = logReferences[logReference];
-
-            uint64_t delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - reference).count();
+            K3LogStore store = logReferences[logReference];
+            std::chrono::steady_clock::time_point basis = store.basis;
+            uint64_t delta = std::chrono::duration_cast<std::chrono::milliseconds>(now - basis).count();
 
             if(delta >= LOG_SPAM_INTERVAL_MS) {
-                logReferences[logReference] = now;
+                store.basis = now;
+                logReferences[logReference] = store;
                 //KE_TRACE("{}.{}[{}]@{}", logReference.file, logReference.function, logReference.line, delta);
                 return true;
             } else {
+                store.counter++;
+                logReferences[logReference] = store;
                 return false;
             }
+        }
+    }
+
+    int LogManger::rebase(std::string file, std::string function, int line) {
+        K3LogReference logReference {};
+        logReference.file = file;
+        logReference.function = function;
+        logReference.line = line;
+        if(logReferences.count(logReference) != 0) {
+            K3LogStore store = logReferences[logReference];
+            int counter = store.counter;
+            store.counter = 0;
+            logReferences[logReference] = store;
+            return counter;
+        } else {
+            return -1;
         }
     }
 }

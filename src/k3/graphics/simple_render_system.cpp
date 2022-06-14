@@ -4,7 +4,7 @@ namespace k3::graphics  {
 
     struct SimplePushConstantData {
         glm::mat4 transform{1.f};
-        alignas(16) glm::vec3 color;
+        glm::mat4 normalMatrix{1.f};
     };
 
     K3SimpleRenderSystem::K3SimpleRenderSystem(std::shared_ptr<K3Device> device, VkRenderPass renderPass) : m_device {device} {
@@ -75,8 +75,9 @@ namespace k3::graphics  {
         for(auto& gameObject: m_gameObjects) {
             
             SimplePushConstantData push{};
-            push.color = gameObject.color;
+            auto modelMatrix = gameObject.transform.mat4();
             push.transform = projectionView * gameObject.transform.mat4();
+            push.normalMatrix = gameObject.transform.normalMatrix();
 
             vkCmdPushConstants(frameInfo.commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &push);
             gameObject.model->bind(frameInfo.commandBuffer);

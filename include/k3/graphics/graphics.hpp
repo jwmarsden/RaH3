@@ -2,8 +2,7 @@
 
 #include "config.h"
 
-#include "log.h"
-#include "k3/logging/log_manager.hpp"
+#include "k3/logging/log.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"

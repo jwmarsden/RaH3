@@ -1,6 +1,6 @@
 #pragma once
 
-#include "log.h"
+#include "k3/logging/log.hpp"
 
 #include "window.hpp"
 #include "device.hpp"

@@ -32,21 +32,17 @@ namespace k3::graphics {
 
     std::vector<VkVertexInputAttributeDescription> K3Vertex::getAttributeDescriptions() {
         KE_IN(KE_NOARG);
-        std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
-        attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].binding = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(K3Vertex, position);
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
 
-        attributeDescriptions[1].location = 1;
-        attributeDescriptions[1].binding = 0;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(K3Vertex, color);
+        attributeDescriptions.push_back({0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(K3Vertex, position)});
+        attributeDescriptions.push_back({1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(K3Vertex, color)});
+        attributeDescriptions.push_back({2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(K3Vertex, normal)});
+        attributeDescriptions.push_back({3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(K3Vertex, uv)});
         KE_OUT(KE_NOARG);
         return attributeDescriptions;
     }
 
-    void K3Builder::loadModel(const std::string &filePath, bool flipY) {
+    void K3Builder::loadModel(const std::string &filePath) {
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
         std::vector<tinyobj::material_t> materials;
@@ -69,7 +65,7 @@ namespace k3::graphics {
                 if(index.vertex_index >= 0) {
                     vertex.position = {
                         attrib.vertices[3 * index.vertex_index + 0],
-                        ((flipY) ? -1 : 1) * attrib.vertices[3 * index.vertex_index + 1],
+                        attrib.vertices[3 * index.vertex_index + 1],
                         attrib.vertices[3 * index.vertex_index + 2],
                     };
 

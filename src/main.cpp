@@ -1,8 +1,6 @@
 #include "config.h"
 
-#include "log.h"
-
-#include "k3/logging/log_manager.hpp"
+#include "k3/logging/log.hpp"
 
 #include "k3/graphics/window.hpp"
 #include "k3/graphics/device.hpp"
@@ -49,11 +47,11 @@ void loadGameObjects() {
 
     glm::vec3 offset{};
 
-    std::shared_ptr<k3::graphics::K3Model> model = k3::graphics::K3Model::createModelFromFile(m_graphics->getDevice(), "models/teapot.obj", true);
+    std::shared_ptr<k3::graphics::K3Model> model = k3::graphics::K3Model::createModelFromFile(m_graphics->getDevice(), "models/tea.obj");
 
     k3::graphics::K3GameObject gameObject = k3::graphics::K3GameObject::createGameObject("teapot");
     gameObject.model = model;
-    gameObject.transform.translation = {0.f, .5f, 5.f};
+    gameObject.transform.translation = {0.f, 0.5f, 5.f};
     gameObject.transform.scale = {.5f, .5f, .5f};
 
     m_gameObjects.push_back(std::move(gameObject));
@@ -91,6 +89,8 @@ void shutdown() {
     }
 
     KE_INFO("Kinetic Has Shut Down All Subsystems. Exit Logging.");
+
+    k3::logging::LogManger::getInstance().shutdown();
 }
 
 void criticalStop(std::exception_ptr eptr) {
@@ -122,13 +122,10 @@ void run() {
     k3::graphics::K3Camera camera{};
     camera.setViewTarget(glm::vec3(-20.f,-2.0f, 2.0f), glm::vec3(0.0f, 0.f, 1.5f));
 
-    k3::controller::WindowBehaviorController windowController{};
-    windowController.init(m_window, m_graphics);
+    k3::controller::WindowBehaviorController windowController{m_window, m_graphics};
 
     auto viewerObject = k3::graphics::K3GameObject::createGameObject("camera");
-
     k3::controller::KeyboardMovementController cameraController{};
-    cameraController.init();
 
     auto currentTime = std::chrono::high_resolution_clock::now();
 
@@ -145,11 +142,12 @@ void run() {
 
     uint32_t frameCounter = 0;
 
-    KE_TRACE("Enter Game Loop");
+    KE_TRACE("Enter Game Loop {}", frameCounter);
     while(!m_window->shouldClose()) {
+
         // This might block
         glfwPollEvents();
-        KE_TRACE_SPAM("GLFW Polled Events");
+        KE_TRACE_SPAM("GLFW Polled Events {}", frameCounter);
 
         // Check GUI Updates - Update the fps every 100 frames. 
         if(frameCounter%200 == 0) {
@@ -165,7 +163,7 @@ void run() {
                 fps = 1.f / (avgRenderTime/FRAME_TIME_SIZE_FLOAT);
             }
         }
-        KE_TRACE_SPAM("Calculated GUI Updates");
+        KE_TRACE_SPAM("Calculated GUI Updates {}", frameCounter);
 
         auto newTime = std::chrono::high_resolution_clock::now();
         float frameTime = std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count();
@@ -176,20 +174,20 @@ void run() {
         if(++currentFrameTime >= FRAME_TIME_SIZE) {
             currentFrameTime = 0;
         }
-        KE_TRACE_SPAM("Stored Time");
+        KE_TRACE_SPAM("Stored Time {}", frameCounter);
 
         cameraController.handleMovementInPlaneXZ(m_window, frameTime, viewerObject);
         camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
 
-        KE_TRACE_SPAM("Moved Camera");
+        KE_TRACE_SPAM("Moved Camera {}", frameCounter);
         
         float aspect = renderer->getAspectRatio();
         //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
         camera.setPerspectiveProjection(glm::pi<float>()/4.f, aspect, 0.1f, 20.f);
-        KE_TRACE_SPAM("Set Projection");
+        KE_TRACE_SPAM("Set Projection {}", frameCounter);
 
-        KE_TRACE_SPAM("Enter Frame {}", frameCounter);
         if(auto commandBuffer = renderer->beginFrame()) {
+            KE_TRACE_SPAM("Enter Frame {}", frameCounter);
             int frameIndex = renderer->getFrameIndex();
             k3::graphics::K3FrameInfo frameInfo {
                 frameIndex,
@@ -205,7 +203,6 @@ void run() {
             globalUboBuffer.flushIndex(frameIndex);
 
             // Render
-
             renderer->beginSwapChainRenderPass(commandBuffer);
             renderSystem->renderGameObjects(frameInfo, m_gameObjects);
             m_graphics->beginGUIFrameRender(commandBuffer, frameTime);
@@ -229,9 +226,7 @@ void run() {
         frameCounter++;
     }
     vkDeviceWaitIdle(device->getDevice());
-    cameraController.shutdown();
-    windowController.shutdown();
-
+    KE_INFO("Vulkan Device Idle. Exiting.");
 }
 
 int main() {
@@ -247,6 +242,7 @@ int main() {
         return EXIT_FAILURE;
     } else {
         shutdown();
+        std::cout << "KBye." << std::endl;
         return EXIT_SUCCESS;
     }
 }

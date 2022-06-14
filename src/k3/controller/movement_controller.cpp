@@ -2,19 +2,15 @@
 
 namespace k3::controller {
 
-    void KeyboardMovementController::init() {
+    KeyboardMovementController::KeyboardMovementController() {
         KE_IN(KE_NOARG);
-        assert(!m_initFlag && "Already had init.");
-        m_initFlag = true;
+
         KE_OUT(KE_NOARG);
     }
 
-    void KeyboardMovementController::shutdown() {
+    KeyboardMovementController::~KeyboardMovementController() {
         KE_IN(KE_NOARG); 
-        assert(m_initFlag && "Must have been init to shutdown.");
-        if(m_initFlag) {
-            m_initFlag = false;
-        }
+
         KE_OUT(KE_NOARG); 
     }
 

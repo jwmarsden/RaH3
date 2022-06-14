@@ -2,11 +2,9 @@
 
 namespace k3::controller {
 
-    void WindowBehaviorController::init(std::shared_ptr<graphics::K3Window> window, std::shared_ptr<graphics::K3Graphics> graphics) {
+    WindowBehaviorController::WindowBehaviorController(std::shared_ptr<graphics::K3Window> window, std::shared_ptr<graphics::K3Graphics> graphics) {
         KE_IN(KE_NOARG);
-        assert(!m_initFlag && "Already had init.");
 
-        m_initFlag = true;
         m_window = window;
         m_graphics = graphics;
 
@@ -15,18 +13,14 @@ namespace k3::controller {
         KE_OUT(KE_NOARG);
     }
 
-    void WindowBehaviorController::shutdown() {
+    WindowBehaviorController::~WindowBehaviorController() {
         KE_IN(KE_NOARG); 
-        assert(m_initFlag && "Must have been init to shutdown.");
-
-        if(m_initFlag) {
-            m_initFlag = false;
-            if(m_window != nullptr) {
-                m_window = nullptr;
-            }
-            if(m_graphics != nullptr) {
-                m_graphics = nullptr;
-            }
+        
+        if(m_window != nullptr) {
+            m_window = nullptr;
+        }
+        if(m_graphics != nullptr) {
+            m_graphics = nullptr;
         }
 
         KE_OUT(KE_NOARG); 
