@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(Kinetic! VERSION "0.4.5")
+project(Kinetic! VERSION "0.4.6")
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -12,8 +12,8 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
     set(K3_BT 2)
 else()
-    MESSAGE( STATUS "CMAKE_BUILD_TYPE not set yet ${CMAKE_BUILD_TYPE}" )
-    set(K3_BT 2)
+    MESSAGE( STATUS "CMAKE_BUILD_TYPE not set Building Debug ${CMAKE_BUILD_TYPE}" )
+    set(K3_BT 1)
 endif()
 
 # Add headers
